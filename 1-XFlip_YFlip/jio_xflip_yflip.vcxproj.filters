@@ -15,17 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Func.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -34,19 +23,30 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="README.txt">
+    <None Include="lena.raw">
       <Filter>Resources</Filter>
-    </Text>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <Text Include="DASM_c_xflip.txt">
       <Filter>Resources</Filter>
     </Text>
     <Text Include="DASM_c_yflip.txt">
       <Filter>Resources</Filter>
     </Text>
+    <Text Include="README.txt">
+      <Filter>Resources</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lena.raw">
-      <Filter>Resources</Filter>
-    </None>
+    <ClCompile Include="Func.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

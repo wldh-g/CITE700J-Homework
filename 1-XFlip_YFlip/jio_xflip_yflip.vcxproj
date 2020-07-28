@@ -139,21 +139,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Func.cpp" />
-    <ClCompile Include="Timer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Func.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="DASM_c_xflip.txt" />
-    <Text Include="README.txt" />
-    <Text Include="DASM_c_yflip.txt" />
+    <None Include="lena.raw" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lena.raw" />
+    <Text Include="DASM_c_xflip.txt" />
+    <Text Include="DASM_c_yflip.txt" />
+    <Text Include="README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Func.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
