@@ -6,5 +6,5 @@ Jio Gim
 
 This repository contains
 
-1. XFlip_YFlip
-   Image flipping using Intel SSE command.
+1. XFlip_YFlip_C
+   Image flipping using generic C.

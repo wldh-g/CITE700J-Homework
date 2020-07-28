@@ -424,3 +424,7 @@ MigrationBackup/
 .ionide/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++,cuda,windows
+
+# Image files
+*.raw
+!lena.raw

@@ -33,4 +33,20 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.txt">
+      <Filter>Resources</Filter>
+    </Text>
+    <Text Include="DASM_c_xflip.txt">
+      <Filter>Resources</Filter>
+    </Text>
+    <Text Include="DASM_c_yflip.txt">
+      <Filter>Resources</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lena.raw">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
 </Project>
