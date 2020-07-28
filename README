@@ -8,3 +8,6 @@ This repository contains
 
 1. XFlip_YFlip_C
    Image flipping using generic C.
+
+2. Addition_Transpose_C
+   Image addition and transpose using generic C.

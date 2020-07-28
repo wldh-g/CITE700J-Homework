@@ -427,4 +427,5 @@ MigrationBackup/
 
 # Image files
 *.raw
-!lena.raw
+!lena*.raw
+!glow_512.raw
