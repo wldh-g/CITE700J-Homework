@@ -5,6 +5,10 @@
  ********************/
 
 namespace simd {
+	//////////////
+	// Flipping //
+	//////////////
+
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 		// TODO
 	};
@@ -12,6 +16,10 @@ namespace simd {
 	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 		// TODO
 	};
+
+	//////////////
+	// Addition //
+	//////////////
 
 	void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size) {
 		// TODO
@@ -21,7 +29,19 @@ namespace simd {
 		// TODO
 	};
 
+	///////////////
+	// Transpose //
+	///////////////
+
 	void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		// TODO
+	};
+
+	void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		// TODO
+	};
+
+	void transpose_block_16(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 		// TODO
 	};
 

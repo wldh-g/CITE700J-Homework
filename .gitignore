@@ -425,7 +425,6 @@ MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++,cuda,windows
 
-# Image files
-*.raw
-!lena*.raw
-!glow_512.raw
+# Output image files
+1-XFlip_YFlip/c_*.raw
+output/

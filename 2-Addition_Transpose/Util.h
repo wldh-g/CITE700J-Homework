@@ -47,7 +47,7 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 	if (img_open_err != 0) {
 		char img_open_err_desc[256] = { 0 };
 		strerror_s(img_open_err_desc, img_open_err);
-		std::cout << "Error opening input image : " << img_open_err_desc << std::endl;
+		std::cout << img_open_err_desc << " (" << path << ")" << std::endl;
 		__exit((int)img_open_err);
 	}
 	size_t hdl_count;
@@ -59,8 +59,8 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 	if (hdl_count == 0) {
 		char img_hdl_err_desc[256] = { 0 };
 		strerror_s(img_hdl_err_desc, errno);
-		std::cout << "Error on file handling (" << path << ") : " << img_hdl_err_desc << std::endl;
-		__exit(-1000);
+		std::cout << img_hdl_err_desc << " (" << path << ")" << std::endl;
+		__exit(errno);
 	}
 	fclose(fp);
 };
@@ -71,7 +71,7 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 
 template<typename T>
 double __exec(std::function<void(T*, T*, size_t, size_t)> func, T* img, T* output, size_t x_size,
-							size_t y_size, unsigned short loop_max) {
+							size_t y_size, unsigned short loop_max = 2000) {
 	const unsigned int img_buf_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
 	CPerfCounter timer;
 	double cpu_time = 0;
@@ -92,8 +92,8 @@ double __exec(std::function<void(T*, T*, size_t, size_t)> func, T* img, T* outpu
 template<typename T, typename R>
 double __exec(std::function<void(T*, T*, R*, size_t, size_t)> func, T* img1, T* img2, R* output,
 							size_t x_size, size_t y_size, unsigned short loop_max = 2000) {
-	const unsigned int img_buf_size_d16 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
-	const unsigned int out_buf_size_d16 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
+	const unsigned int img_buf_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
+	const unsigned int out_buf_size_d128 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
 	CPerfCounter timer;
 	double cpu_time = 0;
 
@@ -151,7 +151,7 @@ void __bulk_diff(veriples& v) {
 template<typename T>
 void __bulk_save(fileples v) {
 	for (size_t idx = 0; idx < v.size(); idx += 1) {
-		__file<T>(std::get<0>(v[idx]), std::get<1>(v[idx]), static_cast<T*>(std::get<2>(v[idx])),
+		__file<T>(std::get<0>(v[idx]), static_cast<T*>(std::get<1>(v[idx])), std::get<2>(v[idx]),
 							std::get<3>(v[idx]), "wb");
 	}
 };
@@ -164,7 +164,11 @@ void __bulk_load(fileples v) {
 	}
 };
 
-// Cache Flush
+
+/*******************
+ ** Cache Flusher **
+ *******************/
+
 inline void cache_flush(__m128i* src, unsigned int cnt_vec) {
 	for (unsigned int j = 0; j < cnt_vec; j += 1) {
 		_mm_clflush(src + j);
