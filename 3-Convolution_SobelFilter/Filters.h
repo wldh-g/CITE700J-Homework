@@ -2,20 +2,38 @@
 #define _FILT_H_
 
 #include <cstdint>
+#include <initializer_list>
+#include <vector>
 
 namespace filt {
-	constexpr int8_t ones3x3[3][3] = { 1 };
+	template<typename T>
+	class Filter {
+	public:
+		size_t size;
+		std::vector<std::vector<T>*>* kernel;
 
-	constexpr int8_t sobel_x[3][3] = {
-		{ -1, 0, +1 },
-		{ -2, 0, +2 },
-		{ -1, 0, +1 }
+		Filter(size_t size, std::initializer_list<std::initializer_list<T>> kernel) : size(size) {
+			this->kernel = new std::vector<std::vector<T>*>();
+			for (auto row : kernel) {
+				auto row_vec = new std::vector<T>();
+				row_vec->assign(row.begin(), row.end());
+				this->kernel->push_back(row_vec);
+			}
+		};
+
+		~Filter() {
+			delete this->kernel;
+		};
 	};
 
-	constexpr int8_t sobel_y[3][3] = {
-		{ +1, +2, +1 },
-		{  0,  0,  0 },
-		{ -1, -2, -1 }
+	extern const Filter<int8_t>* ones_3x3;
+	extern const Filter<int8_t>* sobel_x;
+	extern const Filter<int8_t>* sobel_y;
+
+	inline void unallocate() {
+		delete ones_3x3;
+		delete sobel_x;
+		delete sobel_y;
 	};
 }
 

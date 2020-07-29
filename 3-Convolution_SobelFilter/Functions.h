@@ -2,6 +2,8 @@
 #define _FUNC_H_
 
 #include <cstdint>
+#include "Filters.h"
+#include "Util.h"
 
 namespace c {
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
@@ -17,14 +19,14 @@ namespace c {
 	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
-	void conv_zp_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size);
-	void conv_zp_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size);
-	void conv_be_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size);
-	void conv_be_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size);
+	void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size);
+	void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size);
+	void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size);
+	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size);
 }
 
 namespace simd {
@@ -41,14 +43,14 @@ namespace simd {
 	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
-	void conv_zp_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size);
-	void conv_zp_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size);
-	void conv_be_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size);
-	void conv_be_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size);
+	void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size);
+	void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size);
+	void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size);
+	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size);
 }
 
 #endif // _FUNC_H_

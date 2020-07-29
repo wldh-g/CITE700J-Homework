@@ -1,3 +1,4 @@
+#include "Filters.h"
 #include "Functions.h"
 
 /********************
@@ -61,20 +62,20 @@ namespace simd {
 	// Convolution //
 	/////////////////
 
-	void conv_zp_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size) {
+	void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
-	void conv_zp_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size) {
+	void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
-	void conv_be_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
-												size_t kernel_size) {
+	void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
+												size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
-	void conv_be_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
-											size_t kernel_size) {
+	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
+											size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
 }
