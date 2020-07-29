@@ -72,13 +72,13 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 template<typename T>
 double __exec(std::function<void(T*, T*, size_t, size_t)> func, T* img, T* output, size_t x_size,
 							size_t y_size, unsigned short loop_max) {
-	const unsigned int img_buf_size_d16 = (unsigned int)(x_size * y_size / 16);
+	const unsigned int img_buf_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
 	CPerfCounter timer;
 	double cpu_time = 0;
 
 	for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-		cache_flush((__m128i*)img, img_buf_size_d16);
-		cache_flush((__m128i*)output, img_buf_size_d16);
+		cache_flush((__m128i*)img, img_buf_size_d128);
+		cache_flush((__m128i*)output, img_buf_size_d128);
 		timer.Reset();
 		timer.Start();
 		func(img, output, x_size, y_size);
@@ -92,14 +92,15 @@ double __exec(std::function<void(T*, T*, size_t, size_t)> func, T* img, T* outpu
 template<typename T, typename R>
 double __exec(std::function<void(T*, T*, R*, size_t, size_t)> func, T* img1, T* img2, R* output,
 							size_t x_size, size_t y_size, unsigned short loop_max = 2000) {
-	const unsigned int img_buf_size_d16 = (unsigned int)(x_size * y_size / 16);
+	const unsigned int img_buf_size_d16 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
+	const unsigned int out_buf_size_d16 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
 	CPerfCounter timer;
 	double cpu_time = 0;
 
 	for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-		cache_flush((__m128i*)img1, img_buf_size_d16);
-		cache_flush((__m128i*)img2, img_buf_size_d16);
-		cache_flush((__m128i*)output, img_buf_size_d16);
+		cache_flush((__m128i*)img1, img_buf_size_d128);
+		cache_flush((__m128i*)img2, img_buf_size_d128);
+		cache_flush((__m128i*)output, out_buf_size_d128);
 		timer.Reset();
 		timer.Start();
 		func(img1, img2, output, x_size, y_size);

@@ -46,4 +46,44 @@ namespace c {
 			}
 		}
 	};
+
+	void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		register size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t in_pos = y * y_size + x;
+				size_t out_pos = 1;
+			}
+		}
+	};
+
+	void transpose_block_32(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		register size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t in_pos = y * y_size + x;
+				size_t out_pos = 1;
+			}
+		}
+	};
+
+	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		register size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t in_pos = y * y_size + x;
+				size_t out_pos = 1;
+			}
+		}
+	};
+
+	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		register size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t in_pos = y * y_size + x;
+				size_t out_pos = 1;
+			}
+		}
+	};
 }
