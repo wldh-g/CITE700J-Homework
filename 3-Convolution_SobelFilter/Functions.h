@@ -1,0 +1,54 @@
+#ifndef _FUNC_H_
+#define _FUNC_H_
+
+#include <cstdint>
+
+namespace c {
+	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size);
+	void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
+
+	void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_16(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_32(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void conv_zp_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
+												size_t kernel_size);
+	void conv_zp_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
+											size_t kernel_size);
+	void conv_be_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
+												size_t kernel_size);
+	void conv_be_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
+											size_t kernel_size);
+}
+
+namespace simd {
+	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size);
+	void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
+
+	void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_16(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_32(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void conv_zp_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
+												size_t kernel_size);
+	void conv_zp_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
+											size_t kernel_size);
+	void conv_be_unsigned(uint8_t* in, int8_t* k, uint8_t* out, size_t x_size, size_t y_size,
+												size_t kernel_size);
+	void conv_be_signed(uint8_t* in, int8_t* k, int8_t* out, size_t x_size, size_t y_size,
+											size_t kernel_size);
+}
+
+#endif // _FUNC_H_
