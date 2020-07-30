@@ -6,6 +6,21 @@
  *****************/
 
 namespace c {
+	///////////////
+	// Inversion //
+	///////////////
+
+	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t in_pos = y * y_size + x;
+				size_t out_pos = y * y_size + x;
+				*(out + out_pos) = 255 - *(in + in_pos);
+			}
+		}
+	};
+
 	//////////////
 	// Flipping //
 	//////////////
@@ -114,16 +129,31 @@ namespace c {
 												size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
+
 	void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
 											size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
+
 	void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
 												size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
+
 	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
 											size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	//////////////////
+	// Sobel Filter //
+	//////////////////
+
+	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
 }

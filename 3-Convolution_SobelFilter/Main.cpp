@@ -6,9 +6,10 @@ int main() {
 	std::filesystem::create_directory("output");
 
 	// Tasks
-	task::general_convolution_unsigned(false);
-	std::cout << std::endl;
-	task::general_convolution_signed(false);
+	task::inversion_8b(true);
+	// task::general_convolution_unsigned(false);
+	// std::cout << std::endl;
+	// task::general_convolution_signed(false);
 
 	return __exit(0);
 }

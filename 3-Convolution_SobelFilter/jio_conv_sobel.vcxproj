@@ -39,8 +39,10 @@
     <ClCompile Include="Func_SIMD.cpp" />
     <ClCompile Include="Task_Addition.cpp" />
     <ClCompile Include="Task_Convolution.cpp" />
-    <ClCompile Include="Task_Flip.cpp" />
-    <ClCompile Include="Task_Transpose.cpp" />
+    <ClCompile Include="Task_Flipping.cpp" />
+    <ClCompile Include="Task_Inversion.cpp" />
+    <ClCompile Include="Task_SobelFilter.cpp" />
+    <ClCompile Include="Task_Transposition.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>

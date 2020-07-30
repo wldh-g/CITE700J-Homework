@@ -6,6 +6,8 @@
 #include "Util.h"
 
 namespace c {
+	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
@@ -27,9 +29,14 @@ namespace c {
 												size_t x_size, size_t y_size);
 	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
 											size_t y_size);
+
+	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 }
 
 namespace simd {
+	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
@@ -51,6 +58,9 @@ namespace simd {
 												size_t x_size, size_t y_size);
 	void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
 											size_t y_size);
+
+	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 }
 
 #endif // _FUNC_H_

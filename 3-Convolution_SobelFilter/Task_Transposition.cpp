@@ -6,7 +6,7 @@
 using std::cout;
 using std::endl;
 
-void task::transposes(bool enable_simd) {
+void task::transposition(bool enable_simd) {
 	// Initialization
 	size_t x_size = 512, y_size = 512;
 	auto* lena_img = __malloc<uint8_t>(x_size * y_size);
