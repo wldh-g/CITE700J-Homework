@@ -5,7 +5,9 @@ Goal :
   Implement image convolution and Sobel filtering using generic C
 
 Explanation :
-  This program will read images in `images` directory and ~~. ~~. The results will be exported in `output` directory.
+  This program will read images in `images` directory and do signed/unsigned
+  convolution and apply Sobel filter. For signed/unsigned convolution, 15x15
+  blurring filter was used. The results will be exported in `output` directory.
 
 Build Requirement : C++17 or later
 
@@ -15,9 +17,25 @@ Tested Environment :
   - Hardware System : AMD Ryzen 7 3700X with 32GB DDR4 memory
 
 Example Output :
+  > <General Convolution (unsigned)>
+  > Opening image for convolution (unsigned)... OK
+  > Testing zero-pad convolution (unsigned)... C 28.8218 ms
+  > Testing boundary extraction convolution (unsigned)... C 29.0906 ms
+  > Saving results... OK
   >
+  > <General Convolution (signed)>
+  > Opening image for convolution (signed)... OK
+  > Testing zero-pad convolution (signed)... C 28.8169 ms
+  > Testing boundary extraction convolution (signed)... C 28.7739 ms
+  > Saving results... OK
+  >
+  > <Sobel Filter>
+  > Opening image for filtering... OK
+  > Testing zero-pad Sobel filter... C 2.75697 ms
+  > Testing boundary extraction Sobel filter... C 2.76107 ms
+  > Saving results... OK
 
-  Note — in above run, I repeated 50000 times for each test instead of 2000.
+  Note — in above run, I repeated 1000 times to measure the execution time.
 
 For disassembled code, refer to `dasm` directory.
 

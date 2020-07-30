@@ -27,14 +27,14 @@ void task::general_convolution_unsigned(bool enable_simd) {
 	bool do_verify = true;
 	cout << "Testing zero-pad convolution (unsigned)... ";
 	r = __exec<uint8_t, int8_t, uint8_t>(c::conv_zp_unsigned, simd::conv_zp_unsigned, enable_simd,
-																			 lena_img, filt::ones_3x3, conv_zp_c_img, conv_zp_simd_img,
-																			 x_size, y_size);
+																			 lena_img, filt::blur_15, conv_zp_c_img, conv_zp_simd_img,
+																			 x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
 	cout << "Testing boundary extraction convolution (unsigned)... ";
 	r = __exec<uint8_t, int8_t, uint8_t>(c::conv_be_unsigned, simd::conv_be_unsigned, enable_simd,
-																			 lena_img, filt::ones_3x3, conv_be_c_img, conv_be_simd_img,
-																			 x_size, y_size);
+																			 lena_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
+																			 x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
 
@@ -86,14 +86,14 @@ void task::general_convolution_signed(bool enable_simd) {
 	bool do_verify = true;
 	cout << "Testing zero-pad convolution (signed)... ";
 	r = __exec<uint8_t, int8_t, int8_t>(c::conv_zp_signed, simd::conv_zp_signed, enable_simd,
-																			lena_img, filt::ones_3x3, conv_zp_c_img, conv_zp_simd_img,
-																			x_size, y_size);
+																			lena_img, filt::blur_15, conv_zp_c_img, conv_zp_simd_img,
+																			x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
 	cout << "Testing boundary extraction convolution (signed)... ";
 	r = __exec<uint8_t, int8_t, int8_t>(c::conv_be_signed, simd::conv_be_signed, enable_simd,
-																			lena_img, filt::ones_3x3, conv_be_c_img, conv_be_simd_img,
-																			x_size, y_size);
+																			lena_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
+																			x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
 

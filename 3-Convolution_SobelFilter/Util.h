@@ -168,21 +168,17 @@ ExecResult* __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, si
 									 bool enable_simd, T* img, const filt::Filter<K>* filter, R* c_out, R* simd_out,
 									 size_t x_size, size_t y_size, unsigned short loop_max = loop_max_default) {
 	const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
-	const unsigned int kernel_size_d128 = (unsigned int)(filter->size * sizeof(K) / 16);
+	const unsigned int kernel_size_d128 = (unsigned int)(filter->size2 * sizeof(K) / 16);
 	const unsigned int out_size_d128 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
 
 	auto c_flush = [&]() -> void {
-		for (size_t k_idx = 0; k_idx < filter->size; k_idx += 1) {
-			cache_flush((__m128i*)filter->kernel[k_idx].data(), kernel_size_d128);
-		}
+		cache_flush((__m128i*)filter->kernel, kernel_size_d128);
 		cache_flush((__m128i*)img, img_size_d128);
 		cache_flush((__m128i*)c_out, out_size_d128);
 	};
 
 	auto simd_flush = [&]() -> void {
-		for (size_t k_idx = 0; k_idx < filter->size; k_idx += 1) {
-			cache_flush((__m128i*)filter->kernel[k_idx].data(), kernel_size_d128);
-		}
+		cache_flush((__m128i*)filter->kernel, kernel_size_d128);
 		cache_flush((__m128i*)img, img_size_d128);
 		cache_flush((__m128i*)simd_out, out_size_d128);
 	};
