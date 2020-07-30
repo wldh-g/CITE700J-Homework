@@ -425,6 +425,9 @@ MigrationBackup/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++,cuda,windows
 
+# Intel Tools
+VTune*/
+
 # Output image files
 1-XFlip_YFlip/c_*.raw
 output/
