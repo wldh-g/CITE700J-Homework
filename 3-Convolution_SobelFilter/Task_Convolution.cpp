@@ -31,7 +31,7 @@ void task::general_convolution_unsigned(bool enable_simd) {
 																			 x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
-	cout << "Testing boundary extraction convolution (unsigned)... ";
+	cout << "Testing boundary extension convolution (unsigned)... ";
 	r = __exec<uint8_t, int8_t, uint8_t>(c::conv_be_unsigned, simd::conv_be_unsigned, enable_simd,
 																			 lena_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
 																			 x_size, y_size, 1000);
@@ -44,7 +44,7 @@ void task::general_convolution_unsigned(bool enable_simd) {
 			cout << "Verifying results... ";
 			__bulk_diff<int8_t>(veriples {
 				$("zero-pad convolution", conv_zp_c_img, conv_zp_simd_img, x_size, y_size),
-				$("boundary extraction convolution", conv_be_c_img, conv_zp_simd_img, x_size, y_size)
+				$("boundary extension convolution", conv_be_c_img, conv_zp_simd_img, x_size, y_size)
 			});
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
@@ -90,7 +90,7 @@ void task::general_convolution_signed(bool enable_simd) {
 																			x_size, y_size, 1000);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
-	cout << "Testing boundary extraction convolution (signed)... ";
+	cout << "Testing boundary extension convolution (signed)... ";
 	r = __exec<uint8_t, int8_t, int8_t>(c::conv_be_signed, simd::conv_be_signed, enable_simd,
 																			lena_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
 																			x_size, y_size, 1000);
@@ -103,7 +103,7 @@ void task::general_convolution_signed(bool enable_simd) {
 			cout << "Verifying results... ";
 			__bulk_diff<int8_t>(veriples {
 				$("zero-pad convolution", conv_zp_c_img, conv_zp_simd_img, x_size, y_size),
-				$("boundary extraction convolution", conv_be_c_img, conv_zp_simd_img, x_size, y_size)
+				$("boundary extension convolution", conv_be_c_img, conv_zp_simd_img, x_size, y_size)
 			});
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;

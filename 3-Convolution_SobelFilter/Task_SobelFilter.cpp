@@ -29,7 +29,7 @@ void task::sobel_filter(bool enable_simd) {
 											x_size, y_size);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
 	delete r->print();
-	cout << "Testing boundary extraction Sobel filter... ";
+	cout << "Testing boundary extension Sobel filter... ";
 	r = __exec<uint8_t>(c::sobel_be, simd::sobel_be, enable_simd, lena_img, be_c_img, be_simd_img,
 											x_size, y_size);
 	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
@@ -41,7 +41,7 @@ void task::sobel_filter(bool enable_simd) {
 			cout << "Verifying results... ";
 			__bulk_diff<uint8_t>(veriples {
 				$("zero-pad Sobel filter", zp_c_img, zp_simd_img, x_size, y_size),
-				$("boundary extraction Sobel filter", be_c_img, be_simd_img, x_size, y_size)
+				$("boundary extension Sobel filter", be_c_img, be_simd_img, x_size, y_size)
 			});
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
