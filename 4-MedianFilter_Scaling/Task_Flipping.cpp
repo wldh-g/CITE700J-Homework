@@ -27,12 +27,12 @@ void task::flipx_flipy(bool enable_simd) {
 	cout << "Testing x-axis flipping... ";
 	r = __exec<uint8_t>(c::xflip, simd::xflip, enable_simd, lena_img, xflip_c_img, xflip_simd_img,
 											x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing y-axis flipping... ";
 	r = __exec<uint8_t>(c::yflip, simd::yflip, enable_simd, lena_img, yflip_c_img, yflip_simd_img,
 											x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 
 	// Verify results using comparison
@@ -43,6 +43,7 @@ void task::flipx_flipy(bool enable_simd) {
 				$("xflip", xflip_c_img, xflip_simd_img, x_size, y_size),
 				$("yflip", yflip_c_img, yflip_simd_img, x_size, y_size)
 			});
+			cout << "OK" << endl;
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
 		}

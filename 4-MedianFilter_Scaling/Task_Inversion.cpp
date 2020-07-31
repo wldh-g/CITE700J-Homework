@@ -25,7 +25,7 @@ void task::inversion_8b(bool enable_simd) {
 	cout << "Testing inversion... ";
 	r = __exec<uint8_t>(c::invert_8b, simd::invert_8b, enable_simd, lena_img, invert_c_img,
 											invert_simd_img, x_size, y_size);
-	do_verify &= ((r->c_error != nullptr) && (r->simd_error != nullptr));
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 
 	// Verify results using comparison
@@ -35,6 +35,7 @@ void task::inversion_8b(bool enable_simd) {
 			__bulk_diff<uint8_t>(veriples {
 				$("inversion", invert_c_img, invert_simd_img, x_size, y_size)
 			});
+			cout << "OK" << endl;
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
 		}

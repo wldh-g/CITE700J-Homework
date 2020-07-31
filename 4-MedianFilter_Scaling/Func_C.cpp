@@ -352,9 +352,9 @@ namespace c {
 				point1 = *(padded_img + pos);
 				point2 = *(padded_img + pos + x_size);
 				point3 = *(padded_img + pos + 2 * x_size);
-				sort2(&point2, &point3);
-				sort2(&point1, &point3);
-				sort2(&point1, &point2);
+				sort2(point2, point3);
+				sort2(point1, point3);
+				sort2(point1, point2);
 				*(out + pos) = point2;
 			}
 		}
@@ -381,15 +381,15 @@ namespace c {
 				point3 = *(padded_img + pos + 2 * x_size);
 				point4 = *(padded_img + pos + 3 * x_size);
 				point5 = *(padded_img + pos + 4 * x_size);
-				sort2(&point1, &point2);
-				sort2(&point4, &point5);
-				sort2(&point3, &point5);
-				sort2(&point3, &point4);
-				sort2(&point1, &point4);
-				sort2(&point1, &point3);
-				sort2(&point2, &point5);
-				sort2(&point2, &point4);
-				sort2(&point2, &point3);
+				sort2(point1, point2);
+				sort2(point4, point5);
+				sort2(point3, point5);
+				sort2(point3, point4);
+				sort2(point1, point4);
+				sort2(point1, point3);
+				sort2(point2, point5);
+				sort2(point2, point4);
+				sort2(point2, point3);
 				*(out + pos) = point3;
 			}
 		}
@@ -424,29 +424,29 @@ namespace c {
 				point7 = *(padded_img + pos + 2 * x_2plus);
 				point8 = *(padded_img + pos + 2 * x_2plus + 1);
 				point9 = *(padded_img + pos + 2 * x_2plus + 2);
-				sort2(&point1, &point2);
-				sort2(&point4, &point5);
-				sort2(&point7, &point8);
-				sort2(&point2, &point3);
-				sort2(&point5, &point6);
-				sort2(&point8, &point9);
-				sort2(&point1, &point2);
-				sort2(&point4, &point5);
-				sort2(&point7, &point8);
-				sort2(&point1, &point4);
-				sort2(&point4, &point7);
-				sort2(&point1, &point4);
-				sort2(&point2, &point5);
-				sort2(&point5, &point8);
-				sort2(&point2, &point5);
-				sort2(&point3, &point6);
-				sort2(&point6, &point9);
-				sort2(&point3, &point6);
-				sort2(&point2, &point4);
-				sort2(&point6, &point8);
-				sort2(&point3, &point7);
-				sort2(&point5, &point7);
-				sort2(&point3, &point5);
+				sort2(point1, point2);
+				sort2(point4, point5);
+				sort2(point7, point8);
+				sort2(point2, point3);
+				sort2(point5, point6);
+				sort2(point8, point9);
+				sort2(point1, point2);
+				sort2(point4, point5);
+				sort2(point7, point8);
+				sort2(point1, point4);
+				sort2(point4, point7);
+				sort2(point1, point4);
+				sort2(point2, point5);
+				sort2(point5, point8);
+				sort2(point2, point5);
+				sort2(point3, point6);
+				sort2(point6, point9);
+				sort2(point3, point6);
+				sort2(point2, point4);
+				sort2(point6, point8);
+				sort2(point3, point7);
+				sort2(point5, point7);
+				sort2(point3, point5);
 				*(out + y * x_size + x) = point5;
 			}
 		}
@@ -458,31 +458,86 @@ namespace c {
 	/////////////
 
 	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		constexpr uint16_t scale = (uint16_t)(0.5f * 128);
 		size_t x, y;
 		for (y = 0; y < y_size; y += 1) {
 			for (x = 0; x < x_size; x += 1) {
 				size_t pos = y * x_size + x;
-				*(out + pos) = (uint8_t)(0.5f * *(in + pos));
+				*(out + pos) = (uint8_t)((scale * *(in + pos)) >> 7);
 			}
 		}
 	};
 
 	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		constexpr uint16_t scale = (uint16_t)(1.3f * 128);
 		size_t x, y;
 		for (y = 0; y < y_size; y += 1) {
 			for (x = 0; x < x_size; x += 1) {
 				size_t pos = y * x_size + x;
-				*(out + pos) = (uint8_t)(*(in + pos) >= 197 ? 255 : 1.3f * *(in + pos));
+				*(out + pos) = (uint8_t)(*(in + pos) >= 197 ? 255 : (scale * *(in + pos)) >> 7);
+			}
+		}
+	};
+
+	void scale_13_unroll64(uint8_t* in, uint8_t* out) {
+		constexpr uint16_t scale = (uint16_t)(1.3f * 128);
+		size_t x, y;
+		#pragma unroll(64)
+		for (y = 0; y < 512; y += 1) {
+			#pragma unroll(64)
+			for (x = 0; x < 512; x += 1) {
+				size_t pos = y * 512 + x;
+				*(out + pos) = (uint8_t)(*(in + pos) >= 197 ? 255 : (scale * *(in + pos)) >> 7);
+			}
+		}
+	};
+
+	void scale_13_unroll512(uint8_t* in, uint8_t* out) {
+		constexpr uint16_t scale = (uint16_t)(1.3f * 128);
+		size_t x, y;
+		#pragma unroll(512)
+		for (y = 0; y < 512; y += 1) {
+			#pragma unroll(512)
+			for (x = 0; x < 512; x += 1) {
+				size_t pos = y * 512 + x;
+				*(out + pos) = (uint8_t)(*(in + pos) >= 197 ? 255 : (scale * *(in + pos)) >> 7);
 			}
 		}
 	};
 
 	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		constexpr uint16_t scale = (uint16_t)(2.4f * 128);
 		size_t x, y;
 		for (y = 0; y < y_size; y += 1) {
 			for (x = 0; x < x_size; x += 1) {
 				size_t pos = y * x_size + x;
-				*(out + pos) = (uint8_t)(*(in + pos) >= 107 ? 255 : 2.4f * *(in + pos));
+				*(out + pos) = (uint8_t)(*(in + pos) >= 107 ? 255 : (scale * *(in + pos)) >> 7);
+			}
+		}
+	};
+
+	void scale_24_unroll64(uint8_t* in, uint8_t* out) {
+		constexpr uint16_t scale = (uint16_t)(2.4f * 128);
+		size_t x, y;
+		#pragma unroll(64)
+		for (y = 0; y < 512; y += 1) {
+			#pragma unroll(64)
+			for (x = 0; x < 512; x += 1) {
+				size_t pos = y * 512 + x;
+				*(out + pos) = (uint8_t)(*(in + pos) >= 107 ? 255 : (scale * *(in + pos)) >> 7);
+			}
+		}
+	};
+
+	void scale_24_unroll512(uint8_t* in, uint8_t* out) {
+		constexpr uint16_t scale = (uint16_t)(2.4f * 128);
+		size_t x, y;
+		#pragma unroll(512)
+		for (y = 0; y < 512; y += 1) {
+			#pragma unroll(512)
+			for (x = 0; x < 512; x += 1) {
+				size_t pos = y * 512 + x;
+				*(out + pos) = (uint8_t)(*(in + pos) >= 107 ? 255 : (scale * *(in + pos)) >> 7);
 			}
 		}
 	};

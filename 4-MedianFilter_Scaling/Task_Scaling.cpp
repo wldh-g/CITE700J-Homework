@@ -29,17 +29,17 @@ void task::scaling(bool enable_simd) {
 	cout << "Testing 0.5x scaling... ";
 	r = __exec<uint8_t>(c::scale_05, simd::scale_05, enable_simd, lena_img, scale_05_c_img,
 											scale_05_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 1.3x scaling... ";
 	r = __exec<uint8_t>(c::scale_13, simd::scale_13, enable_simd, lena_img, scale_13_c_img,
 											scale_13_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 2.4x scaling... ";
 	r = __exec<uint8_t>(c::scale_24, simd::scale_24, enable_simd, lena_img, scale_24_c_img,
 											scale_24_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 
 	// Verify results using comparison
@@ -50,8 +50,8 @@ void task::scaling(bool enable_simd) {
 				$("scaling 0.5x", scale_05_c_img, scale_05_simd_img, x_size, y_size),
 				$("scaling 1.3x", scale_13_c_img, scale_13_simd_img, x_size, y_size),
 				$("scaling 2.4x", scale_24_c_img, scale_24_simd_img, x_size, y_size)
-
 			});
+			cout << "OK" << endl;
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
 		}
@@ -72,4 +72,43 @@ void task::scaling(bool enable_simd) {
 		});
 	}
 	cout << "OK" << endl;
+};
+
+void task::scaling_unrolled(bool save_results) {
+	// Initialization
+	size_t x_size = 512, y_size = 512;
+	auto* lena_img = __malloc<uint8_t>(x_size * y_size);
+	auto* scale_13_u64_img = __malloc<uint8_t>(x_size * y_size);
+	auto* scale_24_u64_img = __malloc<uint8_t>(x_size * y_size);
+	auto* scale_13_u512_img = __malloc<uint8_t>(x_size * y_size);
+	auto* scale_24_u512_img = __malloc<uint8_t>(x_size * y_size);
+	cout << _$m << "<Scaling (unrolled)>" << _$x << endl;
+
+	// Load image(s)
+	cout << "Opening image for scaling (unrolled)... ";
+	__file<uint8_t>("images/lena_512.raw", lena_img, x_size, y_size, "r");
+	cout << "OK" << endl;
+
+	// Execute function(s)
+	ExecResult* r = nullptr;
+	cout << "Testing 1.3x scaling (unrolled)... ";
+	r = __exec<uint8_t>(c::scale_13_unroll64, c::scale_13_unroll512, "(64)", "(512)", lena_img,
+											scale_13_u64_img, scale_13_u512_img, x_size, y_size);
+	delete r->print();
+	cout << "Testing 2.4x scaling (unrolled)... ";
+	r = __exec<uint8_t>(c::scale_24_unroll64, c::scale_24_unroll512, "(64)", "(512)", lena_img,
+											scale_24_u64_img, scale_24_u512_img, x_size, y_size);
+	delete r->print();
+
+	// Save image(s)
+	if (save_results) {
+		cout << "Saving results... ";
+		__bulk_save<uint8_t>(fileples {
+			$("output/scaling_13_unroll64_c.raw", scale_13_u64_img, x_size, y_size),
+			$("output/scaling_13_unroll512_c.raw", scale_13_u512_img, x_size, y_size),
+			$("output/scaling_24_unroll64_c.raw", scale_24_u64_img, x_size, y_size),
+			$("output/scaling_24_unroll512_c.raw", scale_24_u512_img, x_size, y_size)
+		});
+		cout << "OK" << endl;
+	}
 };

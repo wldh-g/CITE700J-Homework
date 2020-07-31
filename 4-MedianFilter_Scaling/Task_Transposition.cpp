@@ -35,32 +35,32 @@ void task::transposition(bool enable_simd) {
 	cout << "Testing line-by-line transpose... ";
 	r = __exec<uint8_t>(c::transpose_line_by_line, simd::transpose_line_by_line, enable_simd,
 											lena_img, tl_c_img, tl_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 8-bit block transpose... ";
 	r = __exec<uint8_t>(c::transpose_block_8, simd::transpose_block_8, enable_simd,
 											lena_img, tb8_c_img, tb8_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 16-bit block transpose... ";
 	r = __exec<uint8_t>(c::transpose_block_16, simd::transpose_block_16, enable_simd,
 											lena_img, tb16_c_img, tb16_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 32-bit block transpose... ";
 	r = __exec<uint8_t>(c::transpose_block_32, simd::transpose_block_32, enable_simd,
 											lena_img, tb32_c_img, tb32_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 64-bit block transpose... ";
 	r = __exec<uint8_t>(c::transpose_block_64, simd::transpose_block_64, enable_simd,
 											lena_img, tb64_c_img, tb64_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 	cout << "Testing 128-bit block transpose... ";
 	r = __exec<uint8_t>(c::transpose_block_128, simd::transpose_block_128, enable_simd,
 											lena_img, tb128_c_img, tb128_simd_img, x_size, y_size);
-	do_verify &= (r->c_error != nullptr && r->simd_error != nullptr);
+	do_verify &= (r->error1 == nullptr) && (r->error2 == nullptr);
 	delete r->print();
 
 	// Verify results using comparison
@@ -75,6 +75,7 @@ void task::transposition(bool enable_simd) {
 				$("64-bit block transpose", tb64_c_img, tb64_simd_img, x_size, y_size),
 				$("128-bit block transpose", tb128_c_img, tb128_simd_img, x_size, y_size)
 			});
+			cout << "OK" << endl;
 		} else {
 			cout << "Verification condition was not satisfied. Skipping verification." << endl;
 		}

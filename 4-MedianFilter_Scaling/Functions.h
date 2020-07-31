@@ -38,7 +38,11 @@ namespace c {
 
 	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_13_unroll64(uint8_t* in, uint8_t* out);
+	void scale_13_unroll512(uint8_t* in, uint8_t* out);
 	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_24_unroll64(uint8_t* in, uint8_t* out);
+	void scale_24_unroll512(uint8_t* in, uint8_t* out);
 }
 
 namespace simd {

@@ -18,5 +18,9 @@ This repository contains
 4. MedianFilter_Scaling_C
    Median filter and image value scaling using generic C.
 
-Homework 1 to 4 was gradually implemented. You can find all code used for
-previous homeworks in homework 4.
+5. All_SIMD
+   Flipping, addition, accumulation, value-scaling, median filter and
+   transposition using SIMD.
+
+Homework 1 to 5 was gradually implemented. You can find all code used for
+previous homeworks in homework 5.

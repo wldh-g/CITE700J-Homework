@@ -50,6 +50,16 @@ inline int __exit(int code) {
 };
 
 /*******************
+ ** Cache Flusher **
+ *******************/
+
+inline void cache_flush(__m128i* src, unsigned int cnt_vec) {
+	for (unsigned int j = 0; j < cnt_vec; j += 1) {
+		_mm_clflush(src + j);
+	}
+};
+
+/*******************
  ** File Handling **
  *******************/
 
@@ -86,19 +96,52 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 
 class ExecResult {
 public:
-	bool simd_enabled;
-	const char* c_error = nullptr;
-	const char* simd_error = nullptr;
-	double c_time = 0;
-	double simd_time = 0;
+	bool is_two;
+	const char* title1 = nullptr;
+	const char* title2 = nullptr;
+	const char* error1 = nullptr;
+	const char* error2 = nullptr;
+	double time1 = 0;
+	double time2 = 0;
 
-	ExecResult(bool simd_enabled);
+	ExecResult(bool compare_two);
+	ExecResult(bool compare_two, const char* title1, const char* title2);
 	ExecResult* print();
 };
 
-ExecResult* __exec_base(std::function<void(void)> c_func, std::function<void(void)> simd_func,
-												std::function<void(void)> c_flush, std::function<void(void)> simd_flush,
-												bool enable_simd, unsigned short loop_max);
+ExecResult* __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
+												std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
+												bool enable_second, unsigned short loop_max = loop_max_default,
+												const char* c1_title = "C", const char* c2_title = "SIMD");
+
+// Execute two functions with label and fixed size
+template<typename T>
+ExecResult* __exec(std::function<void(T*, T*)> c1_func, std::function<void(T*, T*)> c2_func,
+									 const char* c1_title, const char* c2_title, T* img, T* c1_out, T* c2_out,
+									 size_t x_size, size_t y_size, unsigned short loop_max = loop_max_default) {
+	const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
+
+	auto c1_flush = [&]() -> void {
+		cache_flush((__m128i*)img, img_size_d128);
+		cache_flush((__m128i*)c1_out, img_size_d128);
+	};
+
+	auto c2_flush = [&]() -> void {
+		cache_flush((__m128i*)img, img_size_d128);
+		cache_flush((__m128i*)c2_out, img_size_d128);
+	};
+
+	auto c1_wrapper = [&]() -> void {
+		c1_func(img, c1_out);
+	};
+
+	auto c2_wrapper = [&]() -> void {
+		c2_func(img, c2_out);
+	};
+
+	return __exec_base(c1_wrapper, c2_wrapper, c1_flush, c2_flush, true, loop_max, c1_title,
+										 c2_title);
+};
 
 // Execute function with one input
 template<typename T>
@@ -211,9 +254,9 @@ type __diff(T* img_a, T* img_b, size_t x_size, size_t y_size) {
 	return false;
 };
 
-/*****************************
- ** Bulk Processing Helpers **
- *****************************/
+/************************
+ ** Processing Helpers **
+ ************************/
 
 #define veriple std::tuple<const char*, void*, void*, size_t, size_t>
 #define veriples std::vector<veriple>
@@ -245,17 +288,6 @@ void __bulk_load(fileples v) {
 	for (size_t idx = 0; idx < v.size(); idx += 1) {
 		__file<T>(std::get<0>(v[idx]), static_cast<T*>(std::get<1>(v[idx])), std::get<2>(v[idx]),
 							std::get<3>(v[idx]), "r");
-	}
-};
-
-
-/*******************
- ** Cache Flusher **
- *******************/
-
-inline void cache_flush(__m128i* src, unsigned int cnt_vec) {
-	for (unsigned int j = 0; j < cnt_vec; j += 1) {
-		_mm_clflush(src + j);
 	}
 };
 

@@ -2,19 +2,29 @@
 
 std::queue<void*>* q_ptrs = new std::queue<void*>();
 
-ExecResult::ExecResult(bool simd_enabled) { this->simd_enabled = simd_enabled; };
+ExecResult::ExecResult(bool compare_two) {
+	this->is_two = compare_two;
+	this->title1 = "C";
+	this->title2 = "SIMD";
+};
+
+ExecResult::ExecResult(bool compare_two, const char* title1, const char* title2) {
+	this->is_two = compare_two;
+	this->title1 = title1;
+	this->title2 = title2;
+};
 
 ExecResult* ExecResult::print() {
-	if (this->c_error == nullptr) {
-		std::cout << "C " << this->c_time << " ms";
+	if (this->error1 == nullptr) {
+		std::cout << this->title1 << " " << this->time1 << " ms";
 	} else {
-		std::cout << "C : " << this->c_error;
+		std::cout << this->title1 << " : " << this->error1;
 	}
-	if (this->simd_enabled) {
-		if (this->simd_error == nullptr) {
-			std::cout << " / SIMD " << this->simd_time << " ms";
+	if (this->is_two) {
+		if (this->error2 == nullptr) {
+			std::cout << " / " << this->title2 << " " << this->time2 << " ms";
 		} else {
-			std::cout << " / SIMD : " << this->simd_error;
+			std::cout << " / " << this->title2 << " : " << this->error2;
 		}
 	}
 	std::cout << std::endl;
@@ -22,45 +32,46 @@ ExecResult* ExecResult::print() {
 	return this;
 };
 
-ExecResult* __exec_base(std::function<void(void)> c_func, std::function<void(void)> simd_func,
-												std::function<void(void)> c_flush, std::function<void(void)> simd_flush,
-												bool enable_simd, unsigned short loop_max) {
-	ExecResult* result = new ExecResult(enable_simd);
+ExecResult* __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
+												std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
+												bool enable_second, unsigned short loop_max, const char* c1_title,
+												const char* c2_title) {
+	ExecResult* result = new ExecResult(enable_second, c1_title, c2_title);
 	CPerfCounter timer;
-	double c_time = 0;
-	double simd_time = 0;
+	double c1_time = 0;
+	double c2_time = 0;
 
 	try {
 		for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-			c_flush();
+			c1_flush();
 			timer.Reset();
 			timer.Start();
-			c_func();
+			c1_func();
 			timer.Stop();
-			c_time += timer.GetElapsedTime();
+			c1_time += timer.GetElapsedTime();
 		}
-		result->c_time = c_time / (double)loop_max * 1000.0;
+		result->time1 = c1_time / (double)loop_max * 1000.0;
 	} catch (const char* error) {
-		result->c_error = error;
+		result->error1 = error;
 	} catch (...) {
-		result->c_error = "Unknown error occurred";
+		result->error1 = "Unknown error occurred";
 	}
 
-	if (enable_simd) {
+	if (enable_second) {
 		try {
 			for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-				simd_flush();
+				c2_flush();
 				timer.Reset();
 				timer.Start();
-				simd_func();
+				c2_func();
 				timer.Stop();
-				simd_time += timer.GetElapsedTime();
+				c2_time += timer.GetElapsedTime();
 			}
-			result->simd_time = simd_time / (double)loop_max * 1000.0;
+			result->time2 = c2_time / (double)loop_max * 1000.0;
 		} catch (const char* error) {
-			result->simd_error = error;
+			result->error2 = error;
 		} catch (...) {
-			result->simd_error = "Unknown error occurred";
+			result->error2 = "Unknown error occurred";
 		}
 	}
 
