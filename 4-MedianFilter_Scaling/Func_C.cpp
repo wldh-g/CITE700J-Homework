@@ -3,6 +3,7 @@
 #include <cstring>
 #include "Filters.h"
 #include "Functions.h"
+#include "Util.h"
 
 /*****************
  ** C Functions **
@@ -331,6 +332,127 @@ namespace c {
 		delete[] padded_img;
 	};
 
+	///////////////////
+	// Median Filter //
+	///////////////////
+	
+	void median_3tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		uint8_t* padded_img = new uint8_t[x_size * (y_size + 2)] { 0 };
+		uint8_t* in_last_line = in + (y_size - 1) * x_size;
+		for (y = 0; y < y_size; y += 1) {
+			memcpy(padded_img + (y + 1) * x_size, in + y * x_size, x_size);
+		}
+		memcpy(padded_img, in, x_size);
+		memcpy(padded_img + (y_size + 1) * x_size, in_last_line, x_size);
+		uint8_t point1, point2, point3;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_size + x;
+				point1 = *(padded_img + pos);
+				point2 = *(padded_img + pos + x_size);
+				point3 = *(padded_img + pos + 2 * x_size);
+				sort2(&point2, &point3);
+				sort2(&point1, &point3);
+				sort2(&point1, &point2);
+				*(out + pos) = point2;
+			}
+		}
+		delete[] padded_img;
+	};
+
+	void median_5tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		uint8_t* padded_img = new uint8_t[x_size * (y_size + 4)] { 0 };
+		uint8_t* in_last_line = in + (y_size - 1) * x_size;
+		for (y = 0; y < y_size; y += 1) {
+			memcpy(padded_img + (y + 2) * x_size, in + y * x_size, x_size);
+		}
+		for (y = 0; y < 2; y += 1) {
+			memcpy(padded_img + y * x_size, in, x_size);
+			memcpy(padded_img + (y_size + 2 + y) * x_size, in_last_line, x_size);
+		}
+		uint8_t point1, point2, point3, point4, point5;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_size + x;
+				point1 = *(padded_img + pos);
+				point2 = *(padded_img + pos + x_size);
+				point3 = *(padded_img + pos + 2 * x_size);
+				point4 = *(padded_img + pos + 3 * x_size);
+				point5 = *(padded_img + pos + 4 * x_size);
+				sort2(&point1, &point2);
+				sort2(&point4, &point5);
+				sort2(&point3, &point5);
+				sort2(&point3, &point4);
+				sort2(&point1, &point4);
+				sort2(&point1, &point3);
+				sort2(&point2, &point5);
+				sort2(&point2, &point4);
+				sort2(&point2, &point3);
+				*(out + pos) = point3;
+			}
+		}
+		delete[] padded_img;
+	};
+
+	void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		const size_t x_2plus = x_size + 2;
+		const size_t y_2plus = y_size + 2;
+		uint8_t* padded_img = new uint8_t[x_2plus * y_2plus] { 0 };
+		uint8_t* in_last_line = in + (y_size - 1) * x_size;
+		for (y = 0; y < y_size; y += 1) {
+			memcpy(padded_img + (y + 1) * x_2plus + 1, in + y * x_size, x_size);
+		}
+		memcpy(padded_img + 1, in, x_size);
+		memcpy(padded_img + (y_size + 1) * x_2plus + 1, in_last_line, x_size);
+		for (y = 0; y < y_2plus; y += 1) {
+			*(padded_img + y * x_2plus) = *(padded_img + y * x_2plus + 1);
+			*(padded_img + (y + 1) * x_2plus - 2) = *(padded_img + (y + 1) * x_2plus - 3);
+		}
+		uint8_t point1, point2, point3, point4, point5, point6, point7, point8, point9;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_2plus + x;
+				point1 = *(padded_img + pos);
+				point2 = *(padded_img + pos + 1);
+				point3 = *(padded_img + pos + 2);
+				point4 = *(padded_img + pos + x_2plus);
+				point5 = *(padded_img + pos + x_2plus + 1);
+				point6 = *(padded_img + pos + x_2plus + 2);
+				point7 = *(padded_img + pos + 2 * x_2plus);
+				point8 = *(padded_img + pos + 2 * x_2plus + 1);
+				point9 = *(padded_img + pos + 2 * x_2plus + 2);
+				sort2(&point1, &point2);
+				sort2(&point4, &point5);
+				sort2(&point7, &point8);
+				sort2(&point2, &point3);
+				sort2(&point5, &point6);
+				sort2(&point8, &point9);
+				sort2(&point1, &point2);
+				sort2(&point4, &point5);
+				sort2(&point7, &point8);
+				sort2(&point1, &point4);
+				sort2(&point4, &point7);
+				sort2(&point1, &point4);
+				sort2(&point2, &point5);
+				sort2(&point5, &point8);
+				sort2(&point2, &point5);
+				sort2(&point3, &point6);
+				sort2(&point6, &point9);
+				sort2(&point3, &point6);
+				sort2(&point2, &point4);
+				sort2(&point6, &point8);
+				sort2(&point3, &point7);
+				sort2(&point5, &point7);
+				sort2(&point3, &point5);
+				*(out + y * x_size + x) = point5;
+			}
+		}
+		delete[] padded_img;
+	}
+
 	/////////////
 	// Scaling //
 	/////////////
@@ -350,7 +472,7 @@ namespace c {
 		for (y = 0; y < y_size; y += 1) {
 			for (x = 0; x < x_size; x += 1) {
 				size_t pos = y * x_size + x;
-				*(out + pos) = (uint8_t)(1.3f * *(in + pos));
+				*(out + pos) = (uint8_t)(*(in + pos) >= 197 ? 255 : 1.3f * *(in + pos));
 			}
 		}
 	};
@@ -360,7 +482,7 @@ namespace c {
 		for (y = 0; y < y_size; y += 1) {
 			for (x = 0; x < x_size; x += 1) {
 				size_t pos = y * x_size + x;
-				*(out + pos) = (uint8_t)(2.4f * *(in + pos));
+				*(out + pos) = (uint8_t)(*(in + pos) >= 107 ? 255 : 2.4f * *(in + pos));
 			}
 		}
 	};

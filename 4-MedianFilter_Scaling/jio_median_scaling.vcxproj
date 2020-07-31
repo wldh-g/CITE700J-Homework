@@ -19,6 +19,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="Filters.h" />
+    <ClInclude Include="Functions.h" />
+    <ClInclude Include="Tasks.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core.cpp">
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp17</LanguageStandard>
+    </ClCompile>
     <ClCompile Include="Filters.cpp" />
     <ClCompile Include="Func_C.cpp" />
     <ClCompile Include="Func_SIMD.cpp" />
@@ -32,23 +47,12 @@
     <ClCompile Include="Task_SobelFilter.cpp" />
     <ClCompile Include="Task_Transposition.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Core.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Filters.h" />
-    <ClInclude Include="Functions.h" />
-    <ClInclude Include="Tasks.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Core.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="README.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{bb07af8f-bbe1-469b-a22f-d014b312d684}</ProjectGuid>
-    <RootNamespace>My4MedianFilterScaling</RootNamespace>
+    <ProjectGuid>{e0a10fb2-eaa7-4ff3-b59f-0c34dc5b484c}</ProjectGuid>
+    <RootNamespace>jiomedianscaling</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

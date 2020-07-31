@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 00007FF797B01734  mov         rbx,r8
 00007FF797B01737  mov         rdi,rdx

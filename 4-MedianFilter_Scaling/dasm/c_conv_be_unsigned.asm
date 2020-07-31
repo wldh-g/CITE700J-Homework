@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 	void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
 												size_t x_size, size_t y_size) {
 00007FF7D813F640  mov         qword ptr [rsp+20h],r9

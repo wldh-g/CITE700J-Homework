@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 	void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 00007FF7CE977590  mov         qword ptr [rsp+20h],r9
 00007FF7CE977595  mov         qword ptr [rsp+18h],r8

@@ -1,14 +1,14 @@
-﻿Homework 03
+﻿Homework 04
 ===========
 
 Goal :
-  Implement image convolution and Sobel filtering using generic C
+  Implement median filter and image value scaling using generic C
 
 Explanation :
-  This program will read images in `images` directory and do signed/unsigned
-  convolution and apply Sobel filter using zero-padding and boundary extension.
-  For signed/unsigned convolution, 15x15 blurring filter is used. The results
-  will be exported in `output` directory.
+  This program will read `lena_512.raw` in `images` directory and apply median
+  filter with 3 implementations(3-tap, 5-tap, 3-by-3), and will apply value-
+  scaling to the image with scale of 0.5x, 1.3x, and 2.4x. The results will be
+  exported in `output` directory.
 
 Build Requirement : C++17 or later
 
@@ -18,28 +18,24 @@ Tested Environment :
   - Hardware System : AMD Ryzen 7 3700X with 32GB DDR4 memory
 
 Example Output :
-  > <General Convolution (unsigned)>
-  > Opening image for convolution (unsigned)... OK
-  > Testing zero-pad convolution (unsigned)... C 28.8218 ms
-  > Testing boundary extension convolution (unsigned)... C 29.0906 ms
+  > <Median Filter>
+  > Opening image for median filter... OK
+  > Testing 3-tap median filter... C 1.10477 ms
+  > Testing 5-tap median filter... C 3.55247 ms
+  > Testing 3-by-3 median filter... C 5.73081 ms
   > Saving results... OK
-  >
-  > <General Convolution (signed)>
-  > Opening image for convolution (signed)... OK
-  > Testing zero-pad convolution (signed)... C 28.8169 ms
-  > Testing boundary extension convolution (signed)... C 28.7739 ms
-  > Saving results... OK
-  >
-  > <Sobel Filter>
-  > Opening image for filtering... OK
-  > Testing zero-pad Sobel filter... C 2.75697 ms
-  > Testing boundary extension Sobel filter... C 2.76107 ms
+  > 
+  > <Scaling>
+  > Opening image for scaling... OK
+  > Testing 0.5x scaling... C 0.131578 ms
+  > Testing 1.3x scaling... C 0.152497 ms
+  > Testing 2.4x scaling... C 0.241264 ms
   > Saving results... OK
 
-  Note — in above run, I repeated 1000 times to measure the execution time.
+  Note — in above run, I repeated 2000 times to measure the execution time.
 
 For disassembled code, refer to `dasm` directory.
 
 Done.
 
-2020. 07. 30. Jio Gim
+2020. 07. 31. Jio Gim

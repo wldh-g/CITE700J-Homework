@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 		const __m128i ff = _mm_set1_epi8((char)255);
 00007FF7B6293980  movdqa      xmm1,xmmword ptr [__xmm@ffffffffffffffffffffffffffffffff (07FF7B6297A30h)]
 00007FF7B6293988  imul        r8,r9

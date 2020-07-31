@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 	void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size) {
 00007FF7CE976DC0  mov         qword ptr [rsp+20h],r9
 00007FF7CE976DC5  mov         qword ptr [rsp+18h],r8

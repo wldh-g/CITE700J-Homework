@@ -109,6 +109,22 @@ namespace simd {
 		throw "Not implemented"; // TODO
 	};
 
+	///////////////////
+	// Median Filter //
+	///////////////////
+
+	void median_3tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	void median_5tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
 	/////////////
 	// Scaling //
 	/////////////

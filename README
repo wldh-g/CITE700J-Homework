@@ -15,5 +15,8 @@ This repository contains
 3. Convolution_SobelFilter_C
    Image convolution and Sobel filter using generic C.
 
-Homework 1 to 3 was gradually implemented. You can find all code used for
-previous homeworks in homework 3.
+4. MedianFilter_Scaling_C
+   Median filter and image value scaling using generic C.
+
+Homework 1 to 4 was gradually implemented. You can find all code used for
+previous homeworks in homework 4.

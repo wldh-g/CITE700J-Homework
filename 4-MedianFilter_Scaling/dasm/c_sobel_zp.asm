@@ -1,3 +1,4 @@
+; Built with MSVC 19.26.28806 (x64) in Debug mode default options
 	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 00007FF7D8140EB0  mov         qword ptr [rsp+20h],r9
 00007FF7D8140EB5  mov         qword ptr [rsp+18h],r8

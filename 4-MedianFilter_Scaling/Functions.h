@@ -32,6 +32,10 @@ namespace c {
 	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
+	void median_3tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void median_5tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
 	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
@@ -64,6 +68,10 @@ namespace simd {
 
 	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void median_3tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void median_5tap(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
 	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
