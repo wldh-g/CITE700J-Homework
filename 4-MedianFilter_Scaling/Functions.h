@@ -31,6 +31,10 @@ namespace c {
 
 	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 }
 
 namespace simd {
@@ -60,6 +64,10 @@ namespace simd {
 
 	void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 }
 
 #endif // _FUNC_H_

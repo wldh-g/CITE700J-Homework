@@ -1,5 +1,4 @@
-#include <tmmintrin.h>
-#include <emmintrin.h>
+#include <intrin.h>
 #include "Filters.h"
 #include "Functions.h"
 
@@ -107,6 +106,22 @@ namespace simd {
 	};
 
 	void sobel_be(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	/////////////
+	// Scaling //
+	/////////////
+
+	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		throw "Not implemented"; // TODO
+	};
+
+	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
 		throw "Not implemented"; // TODO
 	};
 }

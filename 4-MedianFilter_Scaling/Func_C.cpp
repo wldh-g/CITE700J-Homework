@@ -330,4 +330,38 @@ namespace c {
 		}
 		delete[] padded_img;
 	};
+
+	/////////////
+	// Scaling //
+	/////////////
+
+	void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_size + x;
+				*(out + pos) = (uint8_t)(0.5f * *(in + pos));
+			}
+		}
+	};
+
+	void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_size + x;
+				*(out + pos) = (uint8_t)(1.3f * *(in + pos));
+			}
+		}
+	};
+
+	void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+		size_t x, y;
+		for (y = 0; y < y_size; y += 1) {
+			for (x = 0; x < x_size; x += 1) {
+				size_t pos = y * x_size + x;
+				*(out + pos) = (uint8_t)(2.4f * *(in + pos));
+			}
+		}
+	};
 }
