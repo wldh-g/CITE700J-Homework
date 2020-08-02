@@ -12,6 +12,16 @@ Explanation :
   processing from generic C code and SIMD code will be compared to check its
   validity, and then they will be exported in `output` directory.
 
+File Descriptions :
+  - Functions.h, Func_*.cpp : Image processing functions required by homework
+  - Core.h, Core.cpp : Core function launcher, tester, and file handlers
+  - Tasks.h, Task_*.cpp : Each task functions who repeats test and saves result
+  - Filters.h, Filters.cpp : Filters used to convolution and Sobel filter
+  - Timer.h, Timer.cpp : Timing functions provided by professor
+  - Util.h : Utilities used to test, develop and implement features
+  - Main.cpp : Contains main function and defines what tasks will be performed
+               in this homework
+
 Build Requirement : C++17 or later
 
 Runtime CPU Requirements : SSE2, SSSE3, AVX, AVX2
@@ -24,7 +34,7 @@ Tested Environment :
 Example Output :
   >
 
-  Note — in above run, I repeated 10000 times to measure the execution time.
+  Note — in above run, I repeated 2000 times to measure the execution time.
 
 Done.
 

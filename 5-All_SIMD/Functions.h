@@ -19,6 +19,8 @@ namespace c {
 	void transpose_block_32(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose16_block_8(uint16_t* in, uint16_t* out, size_t x_size, size_t y_size);
+	void transpose32_block_4(uint32_t* in, uint32_t* out, size_t x_size, size_t y_size);
 
 	void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
 												size_t x_size, size_t y_size);
@@ -60,6 +62,8 @@ namespace simd {
 	void transpose_block_32(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void transpose_block_128(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+	void transpose16_block_8(uint16_t* in, uint16_t* out, size_t x_size, size_t y_size);
+	void transpose32_block_4(uint32_t* in, uint32_t* out, size_t x_size, size_t y_size);
 
 	void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
 												size_t x_size, size_t y_size);

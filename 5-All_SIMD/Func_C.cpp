@@ -124,6 +124,40 @@ namespace c {
 		return transpose_block(in, out, x_size, y_size, 128);
 	};
 
+	void transpose16_block_8(uint16_t* in, uint16_t* out, size_t x_size, size_t y_size) {
+		size_t x, y, blk_x, blk_y;
+		const size_t blk_x_size = x_size / 8;
+		const size_t blk_y_size = y_size / 8;
+		for (blk_y = 0; blk_y < blk_y_size; blk_y += 1) {
+			for (blk_x = 0; blk_x < blk_x_size; blk_x += 1) {
+				uint16_t* in_base = in + blk_y * 8 * x_size + blk_x * 8;
+				uint16_t* out_base = out + blk_x * 8 * y_size + blk_y * 8;
+				for (y = 0; y < 8; y += 1) {
+					for (x = 0; x < 8; x += 1) {
+						*(out_base + x * y_size + y) = *(in_base + y * x_size + x);
+					}
+				}
+			}
+		}
+	};
+
+	void transpose32_block_4(uint32_t* in, uint32_t* out, size_t x_size, size_t y_size) {
+		size_t x, y, blk_x, blk_y;
+		const size_t blk_x_size = x_size / 4;
+		const size_t blk_y_size = y_size / 4;
+		for (blk_y = 0; blk_y < blk_y_size; blk_y += 1) {
+			for (blk_x = 0; blk_x < blk_x_size; blk_x += 1) {
+				uint32_t* in_base = in + blk_y * 4 * x_size + blk_x * 4;
+				uint32_t* out_base = out + blk_x * 4 * y_size + blk_y * 4;
+				for (y = 0; y < 4; y += 1) {
+					for (x = 0; x < 4; x += 1) {
+						*(out_base + x * y_size + y) = *(in_base + y * x_size + x);
+					}
+				}
+			}
+		}
+	};
+
 	/////////////////
 	// Convolution //
 	/////////////////

@@ -75,11 +75,11 @@ void __file(const char* path, T* img, size_t x_size, size_t y_size, const char* 
 	}
 	size_t hdl_count;
 	if (strcmp(mode, "wb") == 0) {
-		hdl_count = fwrite(img, x_size * sizeof(T), y_size, fp);
+		hdl_count = fwrite(img, sizeof(T), x_size * y_size, fp);
 	} else {
-		hdl_count = fread_s(img, x_size * y_size * sizeof(T), x_size, y_size, fp);
+		hdl_count = fread_s(img, x_size * y_size * sizeof(T), sizeof(T), x_size * y_size, fp);
 	}
-	if (hdl_count == 0) {
+	if (hdl_count == 0 && errno != 0) {
 		char img_hdl_err_desc[256] = { 0 };
 		strerror_s(img_hdl_err_desc, errno);
 		std::cout << img_hdl_err_desc << " (" << path << ")" << std::endl;

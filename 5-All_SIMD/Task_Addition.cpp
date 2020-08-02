@@ -39,12 +39,10 @@ void task::addition_8b_16b(bool enable_simd) {
 	cout << "Testing 16-bit addition... ";
 	r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, enable_simd, lena_img, glow_img,
 															  add16_c_img, add16_simd_img, x_size, y_size);
-	/* Remove 16-bit addition from test target list, because SIMD function is pseudo-addition.
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("16-bit addition", add16_c_img, add16_simd_img, x_size, y_size));
 	else
 		cout << "[not comparable] ";
-	*/
 	delete r->print();
 
 	// Verify results using comparison
