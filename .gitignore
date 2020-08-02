@@ -431,3 +431,6 @@ VTune*/
 # Output image files
 1-XFlip_YFlip/c_*.raw
 output/
+
+# Exceptions
+!A-Unroll_Pragma/products/inspect_unroll_*.exe

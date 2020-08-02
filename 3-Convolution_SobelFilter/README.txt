@@ -38,8 +38,6 @@ Example Output :
 
   Note — in above run, I repeated 1000 times to measure the execution time.
 
-For disassembled code, refer to `dasm` directory.
-
 Done.
 
 2020. 07. 30. Jio Gim

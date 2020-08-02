@@ -2,7 +2,7 @@ CITE700J High-Performance Algorithm in GPU/DSP
 POSTECH, 2020 Summer
 Jio Gim
 
-==============================================
+===============================================================================
 
 This repository contains
 
@@ -24,3 +24,20 @@ This repository contains
 
 Homework 1 to 5 was gradually implemented. You can find all code used for
 previous homeworks in homework 5.
+
+Disassembled view logs of homework 1 to 5 from Visual Studio are saved on
+`0-DASM_*` directory. For compiler information, refer to the top of each files.
+
+This repository also contains
+
+A. Unroll_Pragma_Inspection
+   About when and how unroll pragma works in Intel C++ compiler.
+
+===============================================================================
+
+How to open `*.raw` files?
+
+- Use ImageJ : https://imagej.nih.gov/ij/
+  Open or import the image with 'RAW' option.
+- Use rawpixels.net : https://rawpixels.net/
+  Open the image with 'Grayscale 8bit' option.

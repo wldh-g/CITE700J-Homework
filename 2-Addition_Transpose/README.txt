@@ -45,8 +45,6 @@ Example Output :
          time than 32-block T. And again, 128-block transpose seems that it
          cannot be done in L2 cache but L3 cache. This is my guess only.
 
-For disassembled code, refer to `dasm` directory.
-
 Done.
 
 2020. 07. 29. Jio Gim
