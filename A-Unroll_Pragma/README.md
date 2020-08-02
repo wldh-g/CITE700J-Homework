@@ -9,7 +9,7 @@ What I've done?
 
 1. I wrote a simple code for inspection. Look [inspect_unroll.cpp](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/inspect_unroll.cpp).\
    I marked the start and the end point of the target of unroll pragma using simple inline assembly.
-   ```x86asm
+   ```assembly
    ; For the start point
    NOP
    NOP
@@ -33,6 +33,7 @@ What I've done?
    | inspect_unroll_O2_U256  | 256                  | /Qvec-                                  |
    | inspect_unroll_O2_U1000 | 1000                 | /Qvec-                                  |
    | inspect_unroll_O3_U255  | 255                  | /O3 /Qvec-                              |
+
    All above configurations without `SIZE` is saved in [the Visual Studio project file](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/inspect_unroll.vcxproj). `SIZE` can be controlled by editing `#define SIZE 16` of [inspect_unroll.cpp](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/inspect_unroll.cpp#L6).\
    Also, you can find all built executables in [products directory](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/products/).
 3. I disassembled all executables using [DUMPBIN](https://docs.microsoft.com/cpp/build/reference/dumpbin-reference?view=vs-2019) tool. Results from this step is saved as `inspect_unroll_OX_UXX.asm` in [products directory](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/products/).
