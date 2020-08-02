@@ -40,7 +40,7 @@ What I've done?
 4. Then I prettified those files. Below table denotes what regular expressions I used. I saved the results from this step as `inspect_unroll_OX_UXX_CUT.asm` in [products directory](https://github.com/wldh-g/CITE700J-Homework/blob/master/A-Unroll_Pragma/products/).
    |                     Replace From (RegEx)                      |     Replaced To     |              Purpose              |
    |:-------------------------------------------------------------:|:-------------------:|:----------------------------------|
-   | `(\s\s[0-9A-F]{16}: [\s0-9A-F]{19})|(^\s{20}[\s0-9A-F]+$\n)`  | *(empty)*           | To remove address number prefixes |
+   | `(\s\s[0-9A-F]{16}: [\s0-9A-F]{19})\|(^\s{20}[\s0-9A-F]+$\n)` | *(empty)*           | To remove address number prefixes |
    | `nop\nnop\ncmp\s+rax,rbx\ncmp\s+rcx,rdx\nnop\nnop`            | `; FLAG_UNROLL_OP`  | To mark the start point           |
    | `nop\nnop\ncmp\s+eax,ebx\ncmp\s+ecx,edx\nnop\nnop`            | `; FLAG_UNROLL_ED`  | To mark the end point             |
 5. Finally, I compared the assembly code files.
