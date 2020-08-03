@@ -35,7 +35,9 @@
     <ClCompile Include="Func_C.cpp" />
     <ClCompile Include="Func_SIMD.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Task_Accumulation.cpp" />
     <ClCompile Include="Task_Addition.cpp" />
+    <ClCompile Include="Task_All.cpp" />
     <ClCompile Include="Task_Convolution.cpp" />
     <ClCompile Include="Task_Flipping.cpp" />
     <ClCompile Include="Task_Inversion.cpp" />

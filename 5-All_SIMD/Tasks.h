@@ -2,6 +2,8 @@
 #define _TASK_H_
 
 namespace task {
+	void all();
+	void accumulation_16b(bool enable_simd = true);
 	void inversion_8b(bool enable_simd = true);
 	void flipx_flipy(bool enable_simd = true);
 	void addition_8b_16b(bool enable_simd = true);

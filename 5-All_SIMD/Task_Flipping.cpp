@@ -25,16 +25,16 @@ void task::flipx_flipy(bool enable_simd) {
 	ExecResult* r = nullptr;
 	veriples verify_list;
 	cout << "Testing x-axis flipping... ";
-	r = __exec<uint8_t>(c::xflip, simd::xflip, enable_simd, lena_img, xflip_c_img, xflip_simd_img,
-											x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::xflip, simd::xflip, enable_simd, lena_img, xflip_c_img,
+															 xflip_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("xflip", xflip_c_img, xflip_simd_img, x_size, y_size));
 	else
 		cout << "[not comparable] ";
 	delete r->print();
 	cout << "Testing y-axis flipping... ";
-	r = __exec<uint8_t>(c::yflip, simd::yflip, enable_simd, lena_img, yflip_c_img, yflip_simd_img,
-											x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::yflip, simd::yflip, enable_simd, lena_img, yflip_c_img,
+															 yflip_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("yflip", yflip_c_img, yflip_simd_img, x_size, y_size));
 	else

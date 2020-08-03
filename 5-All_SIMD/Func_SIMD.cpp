@@ -22,6 +22,23 @@ namespace simd {
 		}
 	};
 
+	//////////////////
+	// Accumulation //
+	//////////////////
+
+	void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
+		size_t i_max = x_size * y_size * 2 / 16;
+		__m128i* _in = (__m128i*)in;
+		__m256i sum = _mm256_set_epi64x(0, 0, 0, 0);
+		for (size_t i = 0; i < i_max; i += 1) {
+			__m256i upcvt_in = _mm256_cvtepu16_epi32(*(_in + i));
+			sum = _mm256_add_epi32(upcvt_in, sum);
+		}
+		*out = (uint64_t)sum.m256i_u32[0] + (uint64_t)sum.m256i_u32[1] + (uint64_t)sum.m256i_u32[2]
+			+ (uint64_t)sum.m256i_u32[3] + (uint64_t)sum.m256i_u32[4] + (uint64_t)sum.m256i_u32[5]
+			+ (uint64_t)sum.m256i_u32[6] + (uint64_t)sum.m256i_u32[7];
+	};
+
 	//////////////
 	// Flipping //
 	//////////////
@@ -469,28 +486,33 @@ namespace simd {
 	};
 
 	void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
-		throw "Under construction"; // TODO
-		/*
 		const size_t x_2plus = x_size + 2;
 		const size_t y_2plus = y_size + 2;
-		uint8_t* pin = new uint8_t[x_2plus * y_2plus] { 0 };
+		uint8_t* pin1 = new uint8_t[x_size * y_2plus] { 0 };
+		uint8_t* pin2 = new uint8_t[x_size * y_2plus] { 0 }; // To prevent memory access error on min &
+		uint8_t* pin3 = new uint8_t[x_size * y_2plus] { 0 }; // max intrinsic operations
 		for (size_t y = 0; y < y_size; y += 1) {
-			memcpy(pin + (y + 1) * x_2plus + 1, in + y * x_size, x_size);
+			memcpy(pin1 + (y + 1) * x_size + 1, in + y * x_size, x_size - 1);
+			memcpy(pin2 + (y + 1) * x_size, in + y * x_size, x_size);
+			memcpy(pin3 + (y + 1) * x_size, in + y * x_size + 1, x_size - 1);
 		}
-		memcpy(pin + 1, in, x_size);
-		memcpy(pin + (y_size + 1) * x_2plus + 1, in + (y_size - 1) * x_size, x_size);
+		memcpy(pin1 + 1, in, x_size - 1);
+		memcpy(pin1 + (y_size + 1) * x_size + 1, in + (y_size - 1) * x_size, x_size - 1);
+		memcpy(pin2, in, x_size);
+		memcpy(pin2 + (y_size + 1) * x_size, in + (y_size - 1) * x_size, x_size);
+		memcpy(pin3, in + 1, x_size - 1);
+		memcpy(pin3 + (y_size + 1) * x_size, in + (y_size - 1) * x_size + 1, x_size - 1);
 		for (size_t y = 0; y < y_2plus; y += 1) {
-			*(pin + y * x_2plus) = *(pin + y * x_2plus + 1);
-			*(pin + (y + 1) * x_2plus - 2) = *(pin + (y + 1) * x_2plus - 3);
+			*(pin1 + y * x_size) = *(pin1 + y * x_size + 1);
+			*(pin3 + (y + 1) * x_size - 1) = *(pin3 + (y + 1) * x_size - 2);
 		}
 		size_t x_iter1 = x_size / 16;
 		size_t x_iter2 = x_iter1 * 2;
 		size_t i_max = x_iter1 * y_size;
-		__m128i* _pin1 = (__m128i*)pin;
-		__m128i* _pin2 = (__m128i*)((uint8_t*)(pin + 1));
-		__m128i* _pin3 = (__m128i*)((uint8_t*)(pin + 2));
+		__m128i* _pin1 = (__m128i*)pin1;
+		__m128i* _pin2 = (__m128i*)pin2;
+		__m128i* _pin3 = (__m128i*)pin3;
 		__m128i* _out = (__m128i*)out;
-		printf("\n");
 		for (size_t i = 0; i < i_max; i += 1) {
 			__m128i e1 = *(_pin1 + i);
 			__m128i e2 = *(_pin2 + i);
@@ -502,33 +524,59 @@ namespace simd {
 			__m128i e8 = *(_pin2 + i + x_iter2);
 			__m128i e9 = *(_pin3 + i + x_iter2);
 
-			// Get rid of two low values
-			//printf("%llx %llx %llx\n", e1, e2, e3);
+			// Get rid of a low value
 			__m128i i1 = _mm_min_epu8(e1, e2);
-			//printf("%llx %llx %llx\n", e1, e2, e3);
 			__m128i i2 = _mm_min_epu8(e3, e4);
-			//printf("%llx %llx %llx\n", e1, e2, e3);
 			__m128i i3 = _mm_min_epu8(e5, e6);
-			//printf("%llx %llx %llx\n", e1, e2, e3);
 			__m128i i4 = _mm_min_epu8(e7, e8);
-			//printf("%llx %llx %llx\n", e1, e2, e3);
+			__m128i i5 = _mm_min_epu8(i1, i2);
+			__m128i i6 = _mm_min_epu8(i3, i4);
 			__m128i v1 = _mm_max_epu8(e1, e2);
-			//printf("%llx %llx %llx\n", e1, e2, e3);
 			__m128i v2 = _mm_max_epu8(e3, e4);
 			__m128i v3 = _mm_max_epu8(e5, e6);
 			__m128i v4 = _mm_max_epu8(e7, e8);
 			__m128i v5 = _mm_max_epu8(i1, i2);
 			__m128i v6 = _mm_max_epu8(i3, i4);
+			__m128i v7 = _mm_max_epu8(i5, i6); // Note : v8 = e9
 
-			// Get rid of two high values
+			// Get rid of a high value
 			__m128i a1 = _mm_max_epu8(v1, v2);
 			__m128i a2 = _mm_max_epu8(v3, v4);
 			__m128i a3 = _mm_max_epu8(v5, v6);
-			__m128i f1 = _mm_min_epu8(v1, v2);
-			__m128i f2 = _mm_min_epu8(v3, v4);
-			__m128i f3 = _mm_min_epu8(v5, v6);
-			__m128i f4 = _mm_min_epu8(a1, a2);
-			__m128i f5 = _mm_min_epu8(a3, e9);
+			__m128i a4 = _mm_max_epu8(v7, e9);
+			__m128i a5 = _mm_max_epu8(a1, a2);
+			__m128i a6 = _mm_max_epu8(a3, a4);
+			__m128i n1 = _mm_min_epu8(v1, v2);
+			__m128i n2 = _mm_min_epu8(v3, v4);
+			__m128i n3 = _mm_min_epu8(v5, v6);
+			__m128i n4 = _mm_min_epu8(v7, e9);
+			__m128i n5 = _mm_min_epu8(a1, a2);
+			__m128i n6 = _mm_min_epu8(a3, a4);
+			__m128i n7 = _mm_min_epu8(a5, a6);
+
+			// Get rid of a high value
+			__m128i m1 = _mm_max_epu8(n1, n2);
+			__m128i m2 = _mm_max_epu8(n3, n4);
+			__m128i m3 = _mm_max_epu8(n5, n6);
+			__m128i m4 = _mm_max_epu8(m1, m2);
+			__m128i m5 = _mm_max_epu8(m3, n7);
+			__m128i h1 = _mm_min_epu8(n1, n2);
+			__m128i h2 = _mm_min_epu8(n3, n4);
+			__m128i h3 = _mm_min_epu8(n5, n6);
+			__m128i h4 = _mm_min_epu8(m1, m2);
+			__m128i h5 = _mm_min_epu8(m3, n7);
+			__m128i h6 = _mm_min_epu8(m4, m5);
+
+			// Get rid of a low value
+			__m128i x1 = _mm_min_epu8(h1, h2);
+			__m128i x2 = _mm_min_epu8(h3, h4);
+			__m128i x3 = _mm_min_epu8(h5, h6);
+			__m128i x4 = _mm_min_epu8(x1, x2);
+			__m128i f1 = _mm_max_epu8(h1, h2);
+			__m128i f2 = _mm_max_epu8(h3, h4);
+			__m128i f3 = _mm_max_epu8(h5, h6);
+			__m128i f4 = _mm_max_epu8(x1, x2);
+			__m128i f5 = _mm_max_epu8(x3, x4);
 
 			// Get median from left 5 values
 			__m128i top_min = _mm_min_epu8(f1, f2);
@@ -544,7 +592,9 @@ namespace simd {
 
 			*(_out + i) = top_mid_min__bot__max;
 		}
-		*/
+		delete[] pin1;
+		delete[] pin2;
+		delete[] pin3;
 	};
 
 	/////////////

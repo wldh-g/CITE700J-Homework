@@ -144,21 +144,26 @@ ExecResult* __exec(std::function<void(T*, T*)> c1_func, std::function<void(T*, T
 };
 
 // Execute function with one input
-template<typename T>
-ExecResult* __exec(std::function<void(T*, T*, size_t, size_t)> c_func,
-									 std::function<void(T*, T*, size_t, size_t)> simd_func, bool enable_simd,
-									 T* img, T* c_out, T* simd_out, size_t x_size, size_t y_size,
-									 unsigned short loop_max = loop_max_default) {
+template<typename T, typename R>
+ExecResult* __exec(std::function<void(T*, R*, size_t, size_t)> c_func,
+									 std::function<void(T*, R*, size_t, size_t)> simd_func, bool enable_simd,
+									 T* img, R* c_out, R* simd_out, size_t x_size, size_t y_size,
+									 unsigned short loop_max = loop_max_default, bool flush_output = true) {
 	const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
+	const unsigned int out_size_d128 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
 
 	auto c_flush = [&]() -> void {
 		cache_flush((__m128i*)img, img_size_d128);
-		cache_flush((__m128i*)c_out, img_size_d128);
+		if (flush_output) {
+			cache_flush((__m128i*)c_out, out_size_d128);
+		}
 	};
 
 	auto simd_flush = [&]() -> void {
 		cache_flush((__m128i*)img, img_size_d128);
-		cache_flush((__m128i*)simd_out, img_size_d128);
+		if (flush_output) {
+			cache_flush((__m128i*)simd_out, out_size_d128);
+		}
 	};
 
 	auto c_wrapper = [&]() -> void {

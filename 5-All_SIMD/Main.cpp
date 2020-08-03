@@ -5,16 +5,28 @@
 int main() {
 	std::filesystem::create_directory("output");
 
+	#ifdef __INTEL_COMPILER
+	std::cout << "Compiled with ICL." << std::endl << std::endl;
+	#else
+	#ifdef _MSC_VER
+	std::cout << "Compiled with MSVC." << std::endl << std::endl;
+	#else
+	std::cout << "Compiled with unknown compiler." << std::endl << std::endl;
+	#endif
+	#endif
+
 	// Tasks
+	// task::all();
+
 	task::flipx_flipy(true);
 	std::cout << std::endl;
-	task::addition_8b_16b(true); // Finished
+	task::addition_8b_16b(true);
 	std::cout << std::endl;
-	// task::accumulation(true); // ?
-	// std::cout << std::endl;
-	task::scaling(true); // Finished
+	task::accumulation_16b(true); // This does not export any output file
 	std::cout << std::endl;
-	task::median_filter(true); // Partial_Finished (3by3 remained)
+	task::scaling(true);
+	std::cout << std::endl;
+	task::median_filter(true);
 	std::cout << std::endl;
 	task::transposition_multibit(true);
 	std::cout << std::endl;

@@ -24,6 +24,19 @@ namespace c {
 		}
 	};
 
+	//////////////////
+	// Accumulation //
+	//////////////////
+
+	void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
+		*out = 0;
+		for (size_t y = 0; y < y_size; y += 1) {
+			for (size_t x = 0; x < x_size; x += 1) {
+				*out += (uint64_t)*(in + y * x_size + x);
+			}
+		}
+	};
+
 	//////////////
 	// Flipping //
 	//////////////
@@ -233,8 +246,8 @@ namespace c {
 		}
 		for (y = 0; y < y_2plus; y += 1) {
 			memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + plus, plus);
-			memcpy(padded_img + (y + 1) * x_2plus - plus - 1,
-						 padded_img + (y + 1) * x_2plus - 2 * plus - 1, plus);
+			memcpy(padded_img + (y + 1) * x_2plus - plus,
+						 padded_img + (y + 1) * x_2plus - 2 * plus, plus);
 		}
 		int32_t tmp;
 		for (y = 0; y < y_size; y += 1) {
@@ -271,8 +284,8 @@ namespace c {
 		}
 		for (y = 0; y < y_2plus; y += 1) {
 			memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + plus, plus);
-			memcpy(padded_img + (y + 1) * x_2plus - plus - 1,
-						 padded_img + (y + 1) * x_2plus - 2 * plus - 1, plus);
+			memcpy(padded_img + (y + 1) * x_2plus - plus,
+						 padded_img + (y + 1) * x_2plus - 2 * plus, plus);
 		}
 		int32_t tmp;
 		for (y = 0; y < y_size; y += 1) {
@@ -340,7 +353,7 @@ namespace c {
 		memcpy(padded_img + (y_size + 1) * x_2plus + 1, in_last_line, x_size);
 		for (y = 0; y < y_2plus; y += 1) {
 			*(padded_img + y * x_2plus) = *(padded_img + y * x_2plus + 1);
-			*(padded_img + (y + 1) * x_2plus - 2) = *(padded_img + (y + 1) * x_2plus - 3);
+			*(padded_img + (y + 1) * x_2plus - 1) = *(padded_img + (y + 1) * x_2plus - 2);
 		}
 		auto gx = filt::sobel_x;
 		auto gy = filt::sobel_y;
@@ -443,7 +456,7 @@ namespace c {
 		memcpy(padded_img + (y_size + 1) * x_2plus + 1, in_last_line, x_size);
 		for (y = 0; y < y_2plus; y += 1) {
 			*(padded_img + y * x_2plus) = *(padded_img + y * x_2plus + 1);
-			*(padded_img + (y + 1) * x_2plus - 2) = *(padded_img + (y + 1) * x_2plus - 3);
+			*(padded_img + (y + 1) * x_2plus - 1) = *(padded_img + (y + 1) * x_2plus - 2);
 		}
 		uint8_t point1, point2, point3, point4, point5, point6, point7, point8, point9;
 		for (y = 0; y < y_size; y += 1) {

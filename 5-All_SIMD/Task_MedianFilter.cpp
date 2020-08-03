@@ -27,8 +27,8 @@ void task::median_filter(bool enable_simd) {
 	ExecResult* r = nullptr;
 	veriples verify_list;
 	cout << "Testing 3-tap median filter... ";
-	r = __exec<uint8_t>(c::median_3tap, simd::median_3tap, enable_simd, lena_img, median_3tap_c_img,
-											median_3tap_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::median_3tap, simd::median_3tap, enable_simd, lena_img,
+															 median_3tap_c_img, median_3tap_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("median filter 3-tap", median_3tap_c_img, median_3tap_simd_img, x_size,
 														y_size));
@@ -36,8 +36,8 @@ void task::median_filter(bool enable_simd) {
 		cout << "[not comparable] ";
 	delete r->print();
 	cout << "Testing 5-tap median filter... ";
-	r = __exec<uint8_t>(c::median_5tap, simd::median_5tap, enable_simd, lena_img, median_5tap_c_img,
-											median_5tap_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::median_5tap, simd::median_5tap, enable_simd, lena_img,
+															 median_5tap_c_img, median_5tap_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("median filter 5-tap", median_5tap_c_img, median_5tap_simd_img, x_size,
 														y_size));
@@ -45,8 +45,8 @@ void task::median_filter(bool enable_simd) {
 		cout << "[not comparable] ";
 	delete r->print();
 	cout << "Testing 3-by-3 median filter... ";
-	r = __exec<uint8_t>(c::median_3by3, simd::median_3by3, enable_simd, lena_img, median_3by3_c_img,
-											median_3by3_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::median_3by3, simd::median_3by3, enable_simd, lena_img,
+															 median_3by3_c_img, median_3by3_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("median filter 3-by-3", median_3by3_c_img, median_3by3_simd_img,
 														x_size, y_size));

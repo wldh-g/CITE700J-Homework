@@ -22,7 +22,14 @@ ExecResult* ExecResult::print() {
 	}
 	if (this->is_two) {
 		if (this->error2 == nullptr) {
-			std::cout << " / " << this->title2 << " " << this->time2 << " ms";
+			if (this->time1 > this->time2) {
+				std::cout << " > ";
+			} else if (this->time1 == this->time2) {
+				std::cout << " = ";
+			} else {
+				std::cout << " < ";
+			}
+			std::cout << this->title2 << " " << this->time2 << " ms";
 		} else {
 			std::cout << " / " << this->title2 << " : " << this->error2;
 		}

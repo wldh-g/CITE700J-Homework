@@ -7,6 +7,8 @@
 namespace c {
 	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
+	void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size);
+
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
@@ -49,6 +51,8 @@ namespace c {
 
 namespace simd {
 	void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+
+	void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size);
 
 	void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 	void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);

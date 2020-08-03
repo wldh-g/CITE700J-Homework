@@ -23,8 +23,8 @@ void task::inversion_8b(bool enable_simd) {
 	ExecResult* r = nullptr;
 	veriples verify_list;
 	cout << "Testing inversion... ";
-	r = __exec<uint8_t>(c::invert_8b, simd::invert_8b, enable_simd, lena_img, invert_c_img,
-											invert_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::invert_8b, simd::invert_8b, enable_simd, lena_img, invert_c_img,
+															 invert_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("inversion", invert_c_img, invert_simd_img, x_size, y_size));
 	else

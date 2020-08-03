@@ -27,24 +27,24 @@ void task::scaling(bool enable_simd) {
 	ExecResult* r = nullptr;
 	veriples verify_list;
 	cout << "Testing 0.5x scaling... ";
-	r = __exec<uint8_t>(c::scale_05, simd::scale_05, enable_simd, lena_img, scale_05_c_img,
-											scale_05_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::scale_05, simd::scale_05, enable_simd, lena_img, scale_05_c_img,
+															 scale_05_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("scaling 0.5x", scale_05_c_img, scale_05_simd_img, x_size, y_size));
 	else
 		cout << "[not comparable] ";
 	delete r->print();
 	cout << "Testing 1.3x scaling... ";
-	r = __exec<uint8_t>(c::scale_13, simd::scale_13, enable_simd, lena_img, scale_13_c_img,
-											scale_13_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::scale_13, simd::scale_13, enable_simd, lena_img, scale_13_c_img,
+															 scale_13_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("scaling 1.3x", scale_13_c_img, scale_13_simd_img, x_size, y_size));
 	else
 		cout << "[not comparable] ";
 	delete r->print();
 	cout << "Testing 2.4x scaling... ";
-	r = __exec<uint8_t>(c::scale_24, simd::scale_24, enable_simd, lena_img, scale_24_c_img,
-											scale_24_simd_img, x_size, y_size);
+	r = __exec<uint8_t, uint8_t>(c::scale_24, simd::scale_24, enable_simd, lena_img, scale_24_c_img,
+															 scale_24_simd_img, x_size, y_size);
 	if ((r->error1 == nullptr) && (r->error2 == nullptr))
 		verify_list.push_back($("scaling 2.4x", scale_24_c_img, scale_24_simd_img, x_size, y_size));
 	else

@@ -6,6 +6,10 @@
 #include <cstring>
 #include <intrin.h>
 
+#define _lo$(m128i) m128i.m128i_u64[0]
+#define _hi$(m128i) m128i.m128i_u64[1]
+#define _$$(m128i) m128i.m128i_u64[1], m128i.m128i_u64[0]
+
 template<typename T = uint8_t>
 inline void sort2(T& a, T& b) {
 	if (a > b) std::swap(a, b);
