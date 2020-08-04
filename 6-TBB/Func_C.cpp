@@ -29,10 +29,9 @@ namespace c {
 
   void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
     *out = 0;
-    for (size_t y = 0; y < y_size; y += 1) {
-      for (size_t x = 0; x < x_size; x += 1) {
-        *out += (uint64_t)*(in + y * x_size + x);
-      }
+    size_t i_max = x_size * y_size;
+    for (size_t i = 0; i < i_max; i += 1) {
+      *out += (uint64_t) * (in + i);
     }
   };
 

@@ -33,29 +33,32 @@ Example Output :
   > 
   > <Accumulation 16-bit>
   > Opening image for accumulation... OK
-  > Testing accumulation... C 0.0825006 ms > SIMD 0.00899775 ms
+  > Testing accumulation... C 0.0341597 ms > SIMD 0.0163526 ms
+  > Verifying results... OK
+  > 
+  > <Accumulation 16-bit w/o Intel® TBB>
+  > Opening image for accumulation... OK
+  > Testing accumulation (without TBB)... C 594.283 ms > SIMD 128.162 ms
   > Verifying results... OK
   > 
   > <Accumulation 16-bit w/ Intel® TBB>
-  > Opening image for accumulation w/ TBB... OK
   > Note : TBB default number of threads in this environment is 16
-  > Testing accumulation (nthread=1)... C 38.8368 ms > SIMD 7.80958 ms
-  > Testing accumulation (nthread=2)... C 42.0774 ms > SIMD 3.98023 ms
-  > Testing accumulation (nthread=4)... C 43.0128 ms > SIMD 2.10318 ms
-  > Testing accumulation (nthread=8)... C 50.9899 ms > SIMD 1.51659 ms
-  > Testing accumulation (nthread=16)... C 56.4326 ms > SIMD 1.40737 ms
-  > TBB Warning: The number of workers is currently limited to 15. The request for 31 workers is ignored. Further requests for more workers will be silently ignored until the limit changes.
-  > 
-  > Testing accumulation (nthread=32)... C 56.4277 ms > SIMD 1.29229 ms
-  > Testing accumulation (nthread=64)... C 56.2676 ms > SIMD 0.984971 ms
-  > Testing accumulation (nthread=128)... C 56.0272 ms > SIMD 0.689147 ms
-  > Testing accumulation (nthread=256)... C 55.9849 ms > SIMD 0.695642 ms
-  > Testing accumulation (nthread=512)... C 56.0281 ms > SIMD 0.689616 ms
+  > Testing accumulation (nthread=1)... C 275.459 ms > SIMD 127.91 ms
+  > Testing accumulation (nthread=2)... C 140.734 ms > SIMD 65.3447 ms
+  > Testing accumulation (nthread=4)... C 76.0509 ms > SIMD 34.8979 ms
+  > Testing accumulation (nthread=8)... C 51.3741 ms > SIMD 23.2547 ms
+  > Testing accumulation (nthread=16)... C 38.0274 ms > SIMD 18.2891 ms
+  > Testing accumulation (nthread=32)... C 37.5332 ms > SIMD 18.1957 ms
+  > Testing accumulation (nthread=64)... C 38.5966 ms > SIMD 18.2606 ms
+  > Testing accumulation (nthread=128)... C 37.1184 ms > SIMD 18.2233 ms
+  > Testing accumulation (nthread=256)... C 37.4672 ms > SIMD 18.2992 ms
+  > Testing accumulation (nthread=512)... C 36.9645 ms > SIMD 18.2656 ms
+  > Testing accumulation (nthread=1024)... C 36.8351 ms > SIMD 18.3874 ms
   > Verifying results... OK
 
-  Note — I repeated each test 2K * 500 = 1M times to measure the execution
+  Note — I repeated each test 200 * 500 = 100k times to measure the execution
          time.
-  Note — it was observed that the general error on the execution time was about
+  Note — It was observed that the general error on the execution time was about
          0.01 ms.
 
 Done.
