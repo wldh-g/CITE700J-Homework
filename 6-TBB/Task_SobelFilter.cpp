@@ -9,7 +9,7 @@ using std::endl;
 void task::sobel_filter(bool enable_simd) {
   // Initialization
   size_t x_size = 512, y_size = 512;
-  auto* lena_img = __malloc<uint8_t>(x_size * y_size);
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   auto* zp_c_img = __malloc<uint8_t>(x_size * y_size);
   auto* be_c_img = __malloc<uint8_t>(x_size * y_size);
   auto* zp_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
@@ -18,14 +18,14 @@ void task::sobel_filter(bool enable_simd) {
 
   // Load image(s)
   cout << "Opening image for filtering... ";
-  __file<uint8_t>("images/lena_512.raw", lena_img, x_size, y_size, "r");
+  __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
   ExecResult* r = nullptr;
   veriples verify_list;
   cout << "Testing zero-pad Sobel filter... ";
-  r = __exec<uint8_t, uint8_t>(c::sobel_zp, simd::sobel_zp, enable_simd, lena_img, zp_c_img,
+  r = __exec<uint8_t, uint8_t>(c::sobel_zp, simd::sobel_zp, enable_simd, pirate_img, zp_c_img,
                                zp_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("zero-pad Sobel filter", zp_c_img, zp_simd_img, x_size, y_size));
@@ -33,7 +33,7 @@ void task::sobel_filter(bool enable_simd) {
     cout << "[not comparable] ";
   delete r->print();
   cout << "Testing boundary extension Sobel filter... ";
-  r = __exec<uint8_t, uint8_t>(c::sobel_be, simd::sobel_be, enable_simd, lena_img, be_c_img,
+  r = __exec<uint8_t, uint8_t>(c::sobel_be, simd::sobel_be, enable_simd, pirate_img, be_c_img,
                                be_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("boundary extension Sobel filter", be_c_img, be_simd_img, x_size,

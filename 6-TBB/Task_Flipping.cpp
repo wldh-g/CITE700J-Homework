@@ -9,7 +9,7 @@ using std::endl;
 void task::flipx_flipy(bool enable_simd) {
   // Initialization
   size_t x_size = 512, y_size = 512;
-  auto* lena_img = __malloc<uint8_t>(x_size * y_size);
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   auto* xflip_c_img = __malloc<uint8_t>(x_size * y_size);
   auto* yflip_c_img = __malloc<uint8_t>(x_size * y_size);
   auto* xflip_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
@@ -18,14 +18,14 @@ void task::flipx_flipy(bool enable_simd) {
 
   // Load image(s)
   cout << "Opening image for flipping... ";
-  __file<uint8_t>("images/lena_512.raw", lena_img, x_size, y_size, "r");
+  __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
   ExecResult* r = nullptr;
   veriples verify_list;
   cout << "Testing x-axis flipping... ";
-  r = __exec<uint8_t, uint8_t>(c::xflip, simd::xflip, enable_simd, lena_img, xflip_c_img,
+  r = __exec<uint8_t, uint8_t>(c::xflip, simd::xflip, enable_simd, pirate_img, xflip_c_img,
                                xflip_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("xflip", xflip_c_img, xflip_simd_img, x_size, y_size));
@@ -33,7 +33,7 @@ void task::flipx_flipy(bool enable_simd) {
     cout << "[not comparable] ";
   delete r->print();
   cout << "Testing y-axis flipping... ";
-  r = __exec<uint8_t, uint8_t>(c::yflip, simd::yflip, enable_simd, lena_img, yflip_c_img,
+  r = __exec<uint8_t, uint8_t>(c::yflip, simd::yflip, enable_simd, pirate_img, yflip_c_img,
                                yflip_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("yflip", yflip_c_img, yflip_simd_img, x_size, y_size));

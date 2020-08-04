@@ -9,7 +9,7 @@ using std::endl;
 void task::addition_8b_16b(bool enable_simd) {
   // Initialization
   size_t x_size = 512, y_size = 512;
-  auto* lena_img = __malloc<uint8_t>(x_size * y_size);
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   auto* glow_img = __malloc<uint8_t>(x_size * y_size);
   auto* add8_c_img = __malloc<uint8_t>(x_size * y_size);
   auto* add16_c_img = __malloc<uint16_t>(x_size * y_size);
@@ -20,8 +20,8 @@ void task::addition_8b_16b(bool enable_simd) {
   // Load image(s)
   cout << "Opening image for addition... ";
   __bulk_load<uint8_t>(fileples {
-    $("images/lena_512.raw", lena_img, x_size, y_size),
-    $("images/glow_512.raw", glow_img, x_size, y_size)
+    $("images/pirate_512_8b.raw", pirate_img, x_size, y_size),
+    $("images/glow_512_8b.raw", glow_img, x_size, y_size)
   });
   cout << "OK" << endl;
 
@@ -29,7 +29,7 @@ void task::addition_8b_16b(bool enable_simd) {
   ExecResult* r = nullptr;
   veriples verify_list;
   cout << "Testing 8-bit addition... ";
-  r = __exec<uint8_t, uint8_t>(c::add_8b, simd::add_8b, enable_simd, lena_img, glow_img,
+  r = __exec<uint8_t, uint8_t>(c::add_8b, simd::add_8b, enable_simd, pirate_img, glow_img,
                                add8_c_img, add8_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("8-bit addition", add8_c_img, add8_simd_img, x_size, y_size));
@@ -37,7 +37,7 @@ void task::addition_8b_16b(bool enable_simd) {
     cout << "[not comparable] ";
   delete r->print();
   cout << "Testing 16-bit addition... ";
-  r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, enable_simd, lena_img, glow_img,
+  r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, enable_simd, pirate_img, glow_img,
                                 add16_c_img, add16_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("16-bit addition", add16_c_img, add16_simd_img, x_size, y_size));

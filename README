@@ -23,10 +23,13 @@ This repository contains
    transposition using SIMD.
 
 6. Multiprocessing
-   Accumulation using Threading Building Blocks
+   Accumulation using Threading Building Blocks.
 
-Homework 1 to 6 was gradually implemented. You can find all code used for
-previous homeworks in homework 6.
+7. Addition_XFlip_YFlip_CUDA
+   Image addition and flipping using CUDA.
+
+Homework 1 to 7 was gradually implemented. You can find all code used for
+previous homeworks in homework 7.
 
 Disassembled view logs of homework 1 to 4 from Visual Studio are saved on
 `0-DASM_*` directory. For compiler information, refer to the top of each files.

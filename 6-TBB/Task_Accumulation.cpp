@@ -13,12 +13,12 @@ using std::endl;
 void task::accumulation_16b(bool enable_simd) {
   // Initialization
   size_t x_size = 512, y_size = 512;
-  auto* lena16_img = __malloc<uint16_t>(x_size * y_size);
+  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   cout << _$m << "<Accumulation 16-bit>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for accumulation... ";
-  __file<uint16_t>("images/lena_512_16b.raw", lena16_img, x_size, y_size, "r");
+  __file<uint16_t>("images/pirate_512_16b.raw", pirate16_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
@@ -27,7 +27,7 @@ void task::accumulation_16b(bool enable_simd) {
   uint64_t simd_result = 0;
   cout << "Testing accumulation... ";
   r = __exec<uint16_t, uint64_t>(c::accumulation_16b, simd::accumulation_16b, enable_simd,
-                                 lena16_img, &c_result, &simd_result, x_size, y_size,
+                                 pirate16_img, &c_result, &simd_result, x_size, y_size,
                                  loop_max_default, false);
   if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
     cout << "[not comparable] ";
@@ -49,18 +49,18 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   // Initialization
   // Note — because I used 64-bit store, there's no problem to set `inner_loop_to` as UINT_MAX / 10
   // Note — but remind that some big images can cause overflow in 32-bit level on SIMD function,
-  //        and `lena_2048_16b_0.001x.raw` is one of the images who does not cause overflow.
+  //        and `pirate_2048_16b_0.001x.raw` is one of the images who does not cause overflow.
   constexpr size_t loop_max = 200;
   constexpr size_t inner_loop_from = 0;
   constexpr size_t inner_loop_to = 500;
   constexpr size_t inner_loop_step = 1;
   size_t x_size = 2048, y_size = 2048;
-  auto* lena16_img = __malloc<uint16_t>(x_size * y_size);
+  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   cout << _$m << "<Accumulation 16-bit w/o Intel® TBB>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for accumulation... ";
-  __file<uint16_t>("images/lena_2048_16b_0.001x.raw", lena16_img, x_size, y_size, "r");
+  __file<uint16_t>("images/pirate_2048_16b_0.001x.raw", pirate16_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Define accumulation repeating lambdas without TBB
@@ -90,8 +90,8 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   // Execute without TBB
   ExecResult* r = nullptr;
   cout << "Testing accumulation (without TBB)... ";
-  r = __exec<uint16_t, uint64_t>(c_gen, simd_gen, enable_simd, lena16_img, &c_result, &simd_result,
-                                 x_size, y_size, loop_max, false);
+  r = __exec<uint16_t, uint64_t>(c_gen, simd_gen, enable_simd, pirate16_img, &c_result,
+                                 &simd_result, x_size, y_size, loop_max, false);
   if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
     cout << "[not comparable] ";
   delete r->print();
@@ -144,7 +144,7 @@ void task::accumulation_16b_tbb(bool enable_simd) {
     exec_arena.execute([&] {
       cout << "Testing accumulation (nthread=" << tbb::this_task_arena::max_concurrency()
         << ")... " << _$r;
-      r = __exec<uint16_t, uint64_t>(c_tbb, simd_tbb, enable_simd, lena16_img, &c_result,
+      r = __exec<uint16_t, uint64_t>(c_tbb, simd_tbb, enable_simd, pirate16_img, &c_result,
                                      &simd_result, x_size, y_size, loop_max, false);
       if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
         cout << "[not comparable] ";
