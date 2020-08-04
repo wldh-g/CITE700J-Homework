@@ -26,19 +26,19 @@ void task::addition_8b_16b(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing 8-bit addition... ";
-  r = __exec<uint8_t, uint8_t>(c::add_8b, simd::add_8b, enable_simd, pirate_img, glow_img,
-                               add8_c_img, add8_simd_img, x_size, y_size);
+  r = __exec<uint8_t, uint8_t>(c::add_8b, simd::add_8b, cuda::add_8b, enable_simd, pirate_img,
+                               glow_img, add8_c_img, add8_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("8-bit addition", add8_c_img, add8_simd_img, x_size, y_size));
   else
     cout << "[not comparable] ";
   delete r->print();
   cout << "Testing 16-bit addition... ";
-  r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, enable_simd, pirate_img, glow_img,
-                                add16_c_img, add16_simd_img, x_size, y_size);
+  r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, cuda::add_16b, enable_simd, pirate_img,
+                                glow_img, add16_c_img, add16_simd_img, x_size, y_size);
   if ((r->error1 == nullptr) && (r->error2 == nullptr))
     verify_list.push_back($("16-bit addition", add16_c_img, add16_simd_img, x_size, y_size));
   else

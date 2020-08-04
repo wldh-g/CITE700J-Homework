@@ -3,7 +3,13 @@
 #include "device_launch_parameters.h"
 
 #include <stdio.h>
-#include "Functions.h"
+#include "CUDA.cuh"
+
+#ifdef __CUDACC__
+#define __block__(...) <<<__VA_ARGS__>>>
+#else
+#define __block__(...)
+#endif
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
 
@@ -89,7 +95,7 @@ cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
     }
 
     // Launch a kernel on the GPU with one thread for each element.
-    addKernel<<<1, size>>>(dev_c, dev_a, dev_b);
+    addKernel CUDA_KERNEL(1, size)(dev_c, dev_a, dev_b);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();

@@ -11,8 +11,8 @@ Explanation :
   and CUDA. The results will be saved in `output` directory.
 
 Code File Descriptions :
-  - Functions.h, Func_*.cpp : Image processing functions required by homework
-  - Core.h, Core.cpp : Core function launcher, tester, and file handlers
+  - Functions.*, Func_*.* : Image processing functions required by homework
+  - Core.* : Core function launcher, tester, and file handlers
   - Tasks.h, Task_*.cpp : Each task functions who repeats test and saves result
   - Filters.h, Filters.cpp : Filters used to convolution and Sobel filter
   - Timer.h, Timer.cpp : Timing functions provided by professor
@@ -49,7 +49,7 @@ Tested Environment :
     + NVIDIA GeForce RTX 2070 SUPER
 
 Example Output :
-  > 
+  >
 
   Note — It was observed that the general error on the execution time
          measurement due to the runtime randomness was about 0.01 ms.

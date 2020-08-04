@@ -85,8 +85,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
+    <ClInclude Include="Core.cuh" />
     <ClInclude Include="Filters.h" />
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="Functions.cuh" />
     <ClInclude Include="Tasks.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Util.h" />

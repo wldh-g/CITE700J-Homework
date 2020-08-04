@@ -30,7 +30,7 @@ void task::transposition_8b(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing line-by-line transpose... ";
   r = __exec<uint8_t, uint8_t>(c::transpose_line_by_line, simd::transpose_line_by_line,
@@ -135,7 +135,7 @@ void task::transposition_multibit(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list8;
   veriples verify_list16;
   veriples verify_list32;

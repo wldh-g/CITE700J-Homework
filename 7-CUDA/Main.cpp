@@ -3,7 +3,7 @@
 #include "Tasks.h"
 
 int main() {
-  std::filesystem::create_directory("output");
+  std::filesystem::create_directory(OUTPUT_DIR);
 
   #ifdef __INTEL_COMPILER
   std::cout << "Compiled with ICL." << std::endl << std::endl;

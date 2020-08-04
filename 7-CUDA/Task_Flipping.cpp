@@ -22,7 +22,7 @@ void task::flipx_flipy(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing x-axis flipping... ";
   r = __exec<uint8_t, uint8_t>(c::xflip, simd::xflip, enable_simd, pirate_img, xflip_c_img,

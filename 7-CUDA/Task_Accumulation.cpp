@@ -24,7 +24,7 @@ void task::accumulation_16b(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   uint64_t c_result = 0;
   uint64_t simd_result = 0;
   cout << "Testing accumulation... ";

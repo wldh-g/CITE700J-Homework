@@ -24,7 +24,7 @@ void task::median_filter(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing 3-tap median filter... ";
   r = __exec<uint8_t, uint8_t>(c::median_3tap, simd::median_3tap, enable_simd, pirate_img,

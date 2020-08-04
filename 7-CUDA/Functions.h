@@ -4,6 +4,14 @@
 #include <cstdint>
 #include "Filters.h"
 
+#ifdef _CUDA
+#include "Functions.cuh"
+
+#define __FUNC__(name) c::name, simd::name, cuda::name
+#elif
+#define __FUNC__(name) c::name, simd::name
+#endif
+
 namespace c {
   void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
@@ -92,17 +100,5 @@ namespace simd {
   void scale_13(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 }
-
-#ifdef _CUDA
-namespace cuda {
-  void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
-
-  void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
-  void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
-
-  void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size);
-  void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
-}
-#endif
 
 #endif // _FUNC_H_

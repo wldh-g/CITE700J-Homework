@@ -24,7 +24,7 @@ void task::scaling(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing 0.5x scaling... ";
   r = __exec<uint8_t, uint8_t>(c::scale_05, simd::scale_05, enable_simd, pirate_img, scale_05_c_img,

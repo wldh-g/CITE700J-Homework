@@ -6,12 +6,10 @@
 using std::cout;
 using std::endl;
 
-void task::inversion_8b(bool enable_simd) {
+void task::inversion_8b(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
+  constexpr size_t x_size = 512, y_size = 512;
   auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
-  auto* invert_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* invert_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
   cout << _$m << "<Inversion 8-bit>" << _$x << endl;
 
   // Load image(s)
@@ -20,16 +18,17 @@ void task::inversion_8b(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
-  veriples verify_list;
+  veriples(uint8_t) verify_list;
   cout << "Testing inversion... ";
-  r = __exec<uint8_t, uint8_t>(c::invert_8b, simd::invert_8b, enable_simd, pirate_img, invert_c_img,
-                               invert_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("inversion", invert_c_img, invert_simd_img, x_size, y_size));
+  auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  r = __exec<uint8_t, uint8_t>(__FUNC__(invert_8b), __ENABLE_SET__, pirate_img, out, x_size,
+                               y_size);
+  if (!r->check_error())
+    verify_list.push_back($("inversion", out));
   else
     cout << "[not comparable] ";
-  delete r->print();
+  r->print_time();
+  delete r;
 
   // Verify results using comparison
   if (enable_simd) {
@@ -41,9 +40,8 @@ void task::inversion_8b(bool enable_simd) {
 
   // Save image(s)
   cout << "Saving results... ";
-  __file<uint8_t>("output/c_invert8.raw", invert_c_img, x_size, y_size, "wb");
-  if (enable_simd) {
-    __file<uint8_t>("output/simd_invert8.raw", invert_simd_img, x_size, y_size, "wb");
-  }
+  delete out->save("invert8");
   cout << "OK" << endl;
+
+  delete out;
 };

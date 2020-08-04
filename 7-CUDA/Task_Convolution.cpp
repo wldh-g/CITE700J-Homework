@@ -23,7 +23,7 @@ void task::general_convolution_unsigned(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing zero-pad convolution (unsigned)... ";
   r = __exec<uint8_t, int8_t, uint8_t>(c::conv_zp_unsigned, simd::conv_zp_unsigned, enable_simd,
@@ -85,7 +85,7 @@ void task::general_convolution_signed(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing zero-pad convolution (signed)... ";
   r = __exec<uint8_t, int8_t, int8_t>(c::conv_zp_signed, simd::conv_zp_signed, enable_simd,

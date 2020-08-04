@@ -22,7 +22,7 @@ void task::sobel_filter(bool enable_simd) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecResult* r = nullptr;
+  ExecMetaSet* r = nullptr;
   veriples verify_list;
   cout << "Testing zero-pad Sobel filter... ";
   r = __exec<uint8_t, uint8_t>(c::sobel_zp, simd::sobel_zp, enable_simd, pirate_img, zp_c_img,
