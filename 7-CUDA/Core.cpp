@@ -1,49 +1,66 @@
-#include "Core.h"
+#include "Core_CXX.h"
 
 std::queue<void*>* q_ptrs = new std::queue<void*>();
 
-ExecMetaSet* __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
-                        std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
-                        bool enable_second, unsigned short loop_max, const char* c1_title,
-                        const char* c2_title) {
-  ExecMetaSet* result = new ExecMetaSet(enable_second, c1_title, c2_title);
+void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
+                 std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
+                 std::function<void(double, const char*)> c1_report,
+                 std::function<void(double, const char*)> c2_report,
+                 bool c1_enable, bool c2_enable, size_t loop_max) {
   CPerfCounter timer;
   double c1_time = 0;
   double c2_time = 0;
 
-  try {
-    for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-      c1_flush();
-      timer.Reset();
-      timer.Start();
-      c1_func();
-      timer.Stop();
-      c1_time += timer.GetElapsedTime();
+  if (c1_enable) {
+    try {
+      for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
+        timer.Reset();
+        c1_flush();
+        timer.Start();
+        c1_func();
+        timer.Stop();
+        c1_time += timer.GetElapsedTime();
+      }
+      c1_report(c1_time / (double)loop_max * 1000.0, nullptr);
+    } catch (const char* error) {
+      c1_report(0, error);
+    } catch (...) {
+      c1_report(0, "Unknown error occurred");
     }
-    result->time1 = c1_time / (double)loop_max * 1000.0;
-  } catch (const char* error) {
-    result->error1 = error;
-  } catch (...) {
-    result->error1 = "Unknown error occurred";
   }
 
-  if (enable_second) {
+  if (c2_enable) {
     try {
-      for (unsigned short loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-        c2_flush();
+      for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
+        c2_flush();
         timer.Start();
         c2_func();
         timer.Stop();
         c2_time += timer.GetElapsedTime();
       }
-      result->time2 = c2_time / (double)loop_max * 1000.0;
+      c2_report(c2_time / (double)loop_max * 1000.0, nullptr);
     } catch (const char* error) {
-      result->error2 = error;
+      c2_report(0, error);
     } catch (...) {
-      result->error2 = "Unknown error occurred";
+      c2_report(0, "Unknown error occurred");
     }
   }
+};
 
-  return result;
+bool __bulk_diff(respool v) {
+  bool is_not_diff = true;
+  for (size_t idx = 0; idx < v.size(); idx += 1) {
+    if (std::get<1>(v[idx])()) {
+      std::cout << "Verification failed in " << std::get<0>(v[idx]) << "." << std::endl;
+      is_not_diff = false;
+    }
+  }
+  return is_not_diff;
+};
+
+void __bulk_save(respool v) {
+  for (size_t idx = 0; idx < v.size(); idx += 1) {
+    std::get<2>(v[idx])();
+  }
 };

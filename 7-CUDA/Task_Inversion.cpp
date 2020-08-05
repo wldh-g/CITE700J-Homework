@@ -18,30 +18,27 @@ void task::inversion_8b(__TASK_ARG_CODE__) {
   cout << "OK" << endl;
 
   // Execute function(s)
-  veriples(uint8_t) verify_list;
-  cout << "Testing inversion... ";
+  respool result_list;
+  cout << "Testing inversion... " << _$r;
   auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
-  r = __exec<uint8_t, uint8_t>(__FUNC__(invert_8b), __ENABLE_SET__, pirate_img, out, x_size,
-                               y_size);
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(invert_8b), __ENABLE_SET__, pirate_img, r);
   if (!r->check_error())
-    verify_list.push_back($("inversion", out));
+    result_list.push_back($ave("inversion", r));
   else
-    cout << "[not comparable] ";
+    cout << "[not comparable] " << _$x;
   r->print_time();
   delete r;
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (__bulk_diff<uint8_t>(verify_list)) {
-      cout << "OK" << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
 
   // Save image(s)
   cout << "Saving results... ";
-  delete out->save("invert8");
+  __bulk_save(result_list);
   cout << "OK" << endl;
 
-  delete out;
+  delete r;
 };

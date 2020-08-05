@@ -15,11 +15,11 @@ void task::all() {
   cout << endl;
   #endif
 
-  task::addition_8b_16b(true);
-  cout << endl;
+  //task::addition_8b_16b(true);
+  //cout << endl;
   
-  task::flipx_flipy(true);
-  cout << endl;
+  //task::flipx_flipy(true);
+  //cout << endl;
   
   #ifndef _CUDA
   task::general_convolution_signed(true);
