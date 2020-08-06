@@ -6,8 +6,6 @@
 
 #ifdef _CUDA
 #include "Functions.cuh"
-
-#define __FUNC__(name) c::name, simd::name, cuda::name
 #elif
 #define __FUNC__(name) c::name, simd::name
 #endif

@@ -8,13 +8,13 @@ using std::endl;
 
 void task::inversion_8b(__TASK_ARG_CODE__) {
   // Initialization
-  constexpr size_t x_size = 512, y_size = 512;
-  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   cout << _$m << "<Inversion 8-bit>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for inversion... ";
-  __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
+  constexpr size_t x_size = 2048, y_size = 2048;
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
+  __file<uint8_t>("images/pirate_2048_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
@@ -25,9 +25,9 @@ void task::inversion_8b(__TASK_ARG_CODE__) {
   if (!r->check_error())
     result_list.push_back($ave("inversion", r));
   else
-    cout << "[not comparable] " << _$x;
+    cout << "[not comparable] ";
+  cout << _$x;
   r->print_time();
-  delete r;
 
   // Verify results using comparison
   cout << "Verifying results... ";

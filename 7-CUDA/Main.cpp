@@ -20,7 +20,9 @@ int main() {
   #endif
 
   // Tasks
-  task::all();
+  // task::all();
+
+  task::transposition_8b();
 
   return __exit(0);
 }

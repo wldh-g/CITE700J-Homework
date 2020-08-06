@@ -1,6 +1,6 @@
 #include "Core_CXX.h"
 
-std::queue<void*>* q_ptrs = new std::queue<void*>();
+std::vector<void*>* vec_ptrs = new std::vector<void*>();
 
 void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
                  std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
@@ -51,7 +51,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
 bool __bulk_diff(respool v) {
   bool is_not_diff = true;
   for (size_t idx = 0; idx < v.size(); idx += 1) {
-    if (std::get<1>(v[idx])()) {
+    if (!std::get<1>(v[idx])()) {
       std::cout << "Verification failed in " << std::get<0>(v[idx]) << "." << std::endl;
       is_not_diff = false;
     }

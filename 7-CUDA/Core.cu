@@ -55,30 +55,21 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       if (cudaGetDeviceCount(&cuda_device_count) != cudaSuccess || cuda_device_count < 1)
         throw "Failed to get CUDA device";
       if (cudaSetDevice(0) != cudaSuccess) throw "Failed to set CUDA device to 0";
-      
-      // Set up events & profiler
-      cudaEvent_t start, stop;
-      cudaEventCreate(&start);
-      cudaEventCreate(&stop);
 
       // Do execution
-      float cuda_time_partial = 0;
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
-        cudaEventRecord(start);
+        timer.Reset();
+        timer.Start();
         cuda_func();
-        cudaEventRecord(stop);
-        cudaEventSynchronize(stop);
-        cudaEventElapsedTime(&cuda_time_partial, start, stop);
-        cuda_time += (double)cuda_time_partial;
+        cudaDeviceSynchronize();
+        timer.Stop();
+        cuda_time += timer.GetElapsedTime();
+        cuda_flush();
       }
 
       // Clearing out
-      cudaEventDestroy(start);
-      cudaEventDestroy(stop);
-      cuda_flush();
       if (cudaDeviceReset() != cudaSuccess) throw "Failed to reset CUDA device";
-
-      cuda_report(cuda_time / (double)loop_max, nullptr);
+      cuda_report(cuda_time / (double)loop_max * 1000.0, nullptr);
     } catch (const char* error) {
       cuda_flush();
       cuda_report(0, error);

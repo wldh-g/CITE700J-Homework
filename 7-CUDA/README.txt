@@ -16,7 +16,7 @@ Code File Descriptions :
   - Tasks.h, Task_*.cpp : Each task functions who repeats test and saves result
   - Filters.h, Filters.cpp : Filters used to convolution and Sobel filter
   - Timer.h, Timer.cpp : Timing functions provided by professor
-  - Util.h : Utilities used to test, develop and implement features
+  - Util.* : Utilities used to test, develop and implement features
   - Main.cpp : Contains main function and defines what tasks will be performed
 
 Visual Studio File Descriptions :

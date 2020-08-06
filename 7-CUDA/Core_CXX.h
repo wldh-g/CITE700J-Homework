@@ -11,7 +11,6 @@
 #include <intrin.h>
 #include <iostream>
 #include <limits>
-#include <queue>
 #include <tuple>
 #include <type_traits>
 #include <vector>
@@ -42,7 +41,7 @@
 #define _$x ""
 #endif
 
-extern std::queue<void*>* q_ptrs;
+extern std::vector<void*>* vec_ptrs;
 
 /***********************
  ** Allocation & Exit **
@@ -51,16 +50,27 @@ extern std::queue<void*>* q_ptrs;
 template<typename T>
 T* __malloc(size_t size) {
   T* ptr = new T[size];
-  q_ptrs->push(ptr);
+  vec_ptrs->push_back(ptr);
   return ptr;
 };
 
-inline int __exit(int code) {
-  for (size_t idx = 0; idx < q_ptrs->size(); idx += 1) {
-    delete[] q_ptrs->front();
-    q_ptrs->pop();
+template<typename T>
+void __free(T* ptr) {
+  for (auto it = vec_ptrs->begin(); it != vec_ptrs->end(); it += 1) {
+    if (*it == ptr) {
+      delete[] (void*)*it;
+      vec_ptrs->erase(it);
+      break;
+    }
   }
-  delete q_ptrs;
+};
+
+inline int __exit(int code) {
+  for (size_t idx = 0; idx < vec_ptrs->size(); idx += 1) {
+    delete[] (void*)vec_ptrs->back();
+    vec_ptrs->pop_back();
+  }
+  delete vec_ptrs;
   filt::unallocate();
   exit(code);
   return code;
@@ -122,11 +132,10 @@ public:
   std::vector<const char*> errors;
   std::vector<double> times;
 
-  ExecResult(std::initializer_list<const char*> list) {
+  ExecResult(std::initializer_list<const char*> list) : titles { list } {
     if (list.size() != N) {
       throw "Unexpected initializer size.";
     }
-    std::copy(list.begin(), list.end(), this->titles.begin());
     for (size_t i = 0; i < N; i += 1) {
       this->outputs.push_back(__malloc<T>(X * Y));
       this->errors.push_back(nullptr);
@@ -136,7 +145,7 @@ public:
 
   ~ExecResult() {
     for (size_t i = 0; i < N; i += 1) {
-      delete[] outputs.at(i);
+      __free(outputs.at(i));
     }
   };
 

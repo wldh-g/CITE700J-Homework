@@ -6,54 +6,54 @@ using std::endl;
 
 void task::all() {
   #ifndef _CUDA
-  task::accumulation_16b(true);
+  task::accumulation_16b();
   cout << endl;
   #endif
 
   #ifdef __INTEL_COMPILER
-  task::accumulation_16b_tbb(true);
+  task::accumulation_16b_tbb();
   cout << endl;
   #endif
 
-  //task::addition_8b_16b(true);
+  //task::addition_8b_16b();
   //cout << endl;
   
-  //task::flipx_flipy(true);
+  //task::flipx_flipy();
   //cout << endl;
   
   #ifndef _CUDA
-  task::general_convolution_signed(true);
+  task::general_convolution_signed();
   cout << endl;
-  task::general_convolution_unsigned(true);
+  task::general_convolution_unsigned();
   cout << endl;
   #endif
 
-  task::inversion_8b(true);
+  task::inversion_8b();
   cout << endl;
   
   #ifndef _CUDA
-  task::median_filter(true);
+  task::median_filter();
   cout << endl;
   #endif
   
   #ifndef _CUDA
-  task::scaling(true);
+  task::scaling();
   cout << endl;
   #ifdef __INTEL_COMPILER
-  task::scaling_unrolled(true);
+  task::scaling_unrolled();
   cout << endl;
   #endif
   #endif
   
   #ifndef _CUDA
-  task::sobel_filter(true);
+  task::sobel_filter();
   cout << endl;
   #endif
   
-  #ifndef _CUDA
-  task::transposition_8b(true);
+  task::transposition_8b();
   cout << endl;
-  task::transposition_multibit(true);
+  #ifndef _CUDA
+  task::transposition_multibit();
   cout << endl;
   #endif
   
