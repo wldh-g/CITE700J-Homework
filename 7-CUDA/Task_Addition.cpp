@@ -6,60 +6,56 @@
 using std::cout;
 using std::endl;
 
-void task::addition_8b_16b(bool enable_simd) {
+void task::addition_8b_16b(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
-  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
-  auto* glow_img = __malloc<uint8_t>(x_size * y_size);
-  auto* add8_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* add16_c_img = __malloc<uint16_t>(x_size * y_size);
-  auto* add8_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
-  auto* add16_simd_img = enable_simd ? __malloc<uint16_t>(x_size * y_size) : nullptr;
   cout << _$m << "<8-bit & 16-bit Addition>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for addition... ";
-  __bulk_load<uint8_t>(fileples {
-    $("images/pirate_512_8b.raw", pirate_img, x_size, y_size),
-    $("images/glow_512_8b.raw", glow_img, x_size, y_size)
+  constexpr size_t x_size = 2048, y_size = 2048;
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
+  auto* glow_img = __malloc<uint8_t>(x_size * y_size);
+  __bulk_load<uint8_t>(filepool {
+    $("images/pirate_2048_8b.raw", pirate_img, x_size, y_size),
+    $("images/glow_2048_8b.raw", glow_img, x_size, y_size)
   });
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecMetaSet* r = nullptr;
-  veriples verify_list;
-  cout << "Testing 8-bit addition... ";
-  r = __exec<uint8_t, uint8_t>(c::add_8b, simd::add_8b, cuda::add_8b, enable_simd, pirate_img,
-                               glow_img, add8_c_img, add8_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("8-bit addition", add8_c_img, add8_simd_img, x_size, y_size));
+  respool result_list;
+  cout << "Testing 8-bit addition (500 reps)... ";
+  auto* r_8 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(add_8b), __ENABLE_SET__, pirate_img, glow_img,
+                                           r_8, 500);
+  if (!r_8->check_error())
+    result_list.push_back($ave("8b_addition", r_8));
   else
     cout << "[not comparable] ";
-  delete r->print();
-  cout << "Testing 16-bit addition... ";
-  r = __exec<uint8_t, uint16_t>(c::add_16b, simd::add_16b, cuda::add_16b, enable_simd, pirate_img,
-                                glow_img, add16_c_img, add16_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("16-bit addition", add16_c_img, add16_simd_img, x_size, y_size));
+  cout << _$x;
+  r_8->print_time();
+
+  cout << "Testing 16-bit addition (500 reps)... ";
+  auto* r_16 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint16_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, uint16_t>(__FUNC__(add_16b), __ENABLE_SET__, pirate_img, glow_img,
+                                            r_16, 500);
+  if (!r_16->check_error())
+    result_list.push_back($ave("16b_addition", r_16));
   else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r_16->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (__bulk_diff<uint8_t>(verify_list)) {
-      cout << "OK" << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
 
   // Save image(s)
   cout << "Saving results... ";
-  __file<uint8_t>("output/c_add8.raw", add8_c_img, x_size, y_size, "wb");
-  __file<uint16_t>("output/c_add16.raw", add16_c_img, x_size, y_size, "wb");
-  if (enable_simd) {
-    __file<uint8_t>("output/simd_add8.raw", add8_simd_img, x_size, y_size, "wb");
-    __file<uint16_t>("output/simd_add16.raw", add16_simd_img, x_size, y_size, "wb");
-  }
+  __bulk_save(result_list);
   cout << "OK" << endl;
+
+  delete r_8;
+  delete r_16;
 };

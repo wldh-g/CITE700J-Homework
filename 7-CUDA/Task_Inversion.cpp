@@ -19,9 +19,10 @@ void task::inversion_8b(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing inversion... " << _$r;
+  cout << "Testing inversion (500 reps)... " << _$r;
   auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
-  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(invert_8b), __ENABLE_SET__, pirate_img, r);
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(invert_8b), __ENABLE_SET__, pirate_img, r,
+                                           500);
   if (!r->check_error())
     result_list.push_back($ave("inversion", r));
   else

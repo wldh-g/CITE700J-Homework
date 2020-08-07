@@ -27,7 +27,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
     } catch (...) {
       c1_report(0, "Unknown error occurred");
     }
-  }
+  } else { c1_report(std::numeric_limits<double>::max(), nullptr); }
 
   if (c2_enable) {
     try {
@@ -45,13 +45,13 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
     } catch (...) {
       c2_report(0, "Unknown error occurred");
     }
-  }
+  } else { c2_report(std::numeric_limits<double>::max(), nullptr); }
 };
 
 bool __bulk_diff(respool v) {
   bool is_not_diff = true;
   for (size_t idx = 0; idx < v.size(); idx += 1) {
-    if (!std::get<1>(v[idx])()) {
+    if (!std::get<1>(v[idx])(is_not_diff)) {
       std::cout << "Verification failed in " << std::get<0>(v[idx]) << "." << std::endl;
       is_not_diff = false;
     }

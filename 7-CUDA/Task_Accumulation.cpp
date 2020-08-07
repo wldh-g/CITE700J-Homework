@@ -12,43 +12,41 @@
 using std::cout;
 using std::endl;
 
-void task::accumulation_16b(bool enable_simd) {
+void task::accumulation_16b(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
-  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   cout << _$m << "<Accumulation 16-bit>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for accumulation... ";
+  constexpr size_t x_size = 512, y_size = 512;
+  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   __file<uint16_t>("images/pirate_512_16b.raw", pirate16_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecMetaSet* r = nullptr;
-  uint64_t c_result = 0;
-  uint64_t simd_result = 0;
-  cout << "Testing accumulation... ";
-  r = __exec<uint16_t, uint64_t>(c::accumulation_16b, simd::accumulation_16b, enable_simd,
-                                 pirate16_img, &c_result, &simd_result, x_size, y_size,
-                                 loop_max_default, false);
-  if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
+  respool result_list;
+  cout << "Testing accumulation (1000 reps)... ";
+  auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint64_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint16_t, uint64_t>(__FUNC__(accumulation_16b), __ENABLE_SET__,
+                                             pirate16_img, r, loop_max_default, false);
+  if (!r->check_error())
+    result_list.push_back($ave("accumulation_16b", r));
+  else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (c_result == simd_result) {
-      cout << "OK" << endl;
-    } else {
-      cout << "(C) " << c_result << " != " << simd_result << " (SIMD)" << endl;
-      cout << "Verification of accumulation failed." << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
+
+  delete r;
 };
 
 #ifdef __INTEL_COMPILER
-void task::accumulation_16b_tbb(bool enable_simd) {
+void task::accumulation_16b_tbb(__TASK_ARG_CODE__) {
   // Initialization
   // Note — because I used 64-bit store, there's no problem to set `inner_loop_to` as UINT_MAX / 10
   // Note — but remind that some big images can cause overflow in 32-bit level on SIMD function,
@@ -57,12 +55,12 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   constexpr size_t inner_loop_from = 0;
   constexpr size_t inner_loop_to = 500;
   constexpr size_t inner_loop_step = 1;
-  size_t x_size = 2048, y_size = 2048;
-  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   cout << _$m << "<Accumulation 16-bit w/o Intel® TBB>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for accumulation... ";
+  constexpr size_t x_size = 2048, y_size = 2048;
+  auto* pirate16_img = __malloc<uint16_t>(x_size * y_size);
   __file<uint16_t>("images/pirate_2048_16b_0.001x.raw", pirate16_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
@@ -70,7 +68,7 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   uint64_t c_result = 0;
   uint64_t simd_result = 0;
 
-  auto c_gen = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> ExecResult* {
+  auto c_gen = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> void {
     auto c_acc = [&](uint32_t idx) -> void {
       c::accumulation_16b(in, out, x_size, y_size);
       c_result += *out;
@@ -80,7 +78,7 @@ void task::accumulation_16b_tbb(bool enable_simd) {
     };
   };
 
-  auto simd_gen = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> ExecResult* {
+  auto simd_gen = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> void {
     auto simd_acc = [&](uint32_t idx) -> void {
       simd::accumulation_16b(in, out, x_size, y_size);
       simd_result += *out;
@@ -91,24 +89,25 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   };
 
   // Execute without TBB
-  ExecResult* r = nullptr;
+  respool result_list;
   cout << "Testing accumulation (without TBB)... ";
-  r = __exec<uint16_t, uint64_t>(c_gen, simd_gen, enable_simd, pirate16_img, &c_result,
-                                 &simd_result, x_size, y_size, loop_max, false);
-  if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
+  auto* r_wo = new ExecResult<x_size, y_size, 2, uint64_t>({ "C", "SIMD" });
+  __exec<x_size, y_size, uint16_t, uint64_t>(c_gen, simd_gen, enable_c, enable_simd, pirate16_img,
+                                             r_wo, loop_max, false);
+  if (!r_wo->check_error())
+    result_list.push_back($ave("accumulation_no_tbb", r_wo));
+  else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r_wo->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (c_result == simd_result) {
-      cout << "OK" << endl;
-    } else {
-      cout << "(C) " << c_result << " != " << simd_result << " (SIMD)" << endl;
-      cout << "Verification of accumulation w/o TBB failed." << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
+
+  delete r_wo;
 
   // Initialize TBB scheduler
   cout << endl;
@@ -118,7 +117,7 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   simd_result = 0;
 
   // Define accumulation repeating lambdas with TBB
-  auto c_tbb = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> ExecResult* {
+  auto c_tbb = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> void {
     auto c_acc = [&](uint32_t idx) -> void {
       c::accumulation_16b(in, out, x_size, y_size);
       c_result += *out;
@@ -126,7 +125,7 @@ void task::accumulation_16b_tbb(bool enable_simd) {
     tbb::parallel_for(inner_loop_from, inner_loop_to, inner_loop_step, c_acc);
   };
 
-  auto simd_tbb = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> ExecResult* {
+  auto simd_tbb = [&](uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) -> void {
     auto simd_acc = [&](uint32_t idx) -> void {
       simd::accumulation_16b(in, out, x_size, y_size);
       simd_result += *out;
@@ -142,17 +141,20 @@ void task::accumulation_16b_tbb(bool enable_simd) {
       << tbb::this_task_arena::max_concurrency() << _$x << endl;
   });
   test_arena.terminate();
+  auto* r_w = new ExecResult<x_size, y_size, 2, uint64_t>({ "C", "SIMD" });
   auto execute_with_nthread = [&](size_t nthread) -> void {
     tbb::task_arena exec_arena((int)nthread);
     exec_arena.execute([&] {
       cout << "Testing accumulation (nthread=" << tbb::this_task_arena::max_concurrency()
         << ")... " << _$r;
-      r = __exec<uint16_t, uint64_t>(c_tbb, simd_tbb, enable_simd, pirate16_img, &c_result,
-                                     &simd_result, x_size, y_size, loop_max, false);
-      if (!(r->error1 == nullptr) || !(r->error2 == nullptr))
+      __exec<x_size, y_size, uint16_t, uint64_t>(c_tbb, simd_tbb, enable_c, enable_simd,
+                                                 pirate16_img, r_w, loop_max, false);
+      if (!r_w->check_error())
+        result_list.push_back($ave("accumulation_tbb", r_w));
+      else
         cout << "[not comparable] ";
       cout << _$x;
-      delete r->print();
+      r_w->print_time();
     });
     exec_arena.terminate();
   };
@@ -170,14 +172,11 @@ void task::accumulation_16b_tbb(bool enable_simd) {
   execute_with_nthread(1024);
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (c_result == simd_result) {
-      cout << "OK" << endl;
-    } else {
-      cout << "(C) " << c_result << " != " << simd_result << " (SIMD)" << endl;
-      cout << "Verification of accumulation w/ TBB failed." << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
+
+  delete r_w;
 };
 #endif

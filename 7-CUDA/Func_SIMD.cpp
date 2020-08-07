@@ -597,6 +597,14 @@ namespace simd {
     delete[] pin3;
   };
 
+  ////////////////////
+  // Multiplication //
+  ////////////////////
+
+  void multiply(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size) {
+    throw "Not implemented"; // TODO
+  };
+
   /////////////
   // Scaling //
   /////////////

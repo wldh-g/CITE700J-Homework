@@ -61,6 +61,9 @@ namespace cuda {
                           dim3& threads);
   extern void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
                           dim3& threads);
+
+  extern void multiply(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size,
+                       dim3& blocks, dim3& threads);
   
   extern void scale_05(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
                        dim3& threads);

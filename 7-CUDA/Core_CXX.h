@@ -151,17 +151,22 @@ public:
 
   void print_time() {
     auto idx = std::min_element(this->times.begin(), this->times.begin() + N);
+    bool is_first_printed = false;
     for (size_t i = 0; i < N; i += 1) {
-      if (i != 0) {
-        std::cout << " / ";
-      }
-      if (this->errors.at(i) == nullptr) {
-        if (std::distance(this->times.begin(), idx) == i) {
-          std::cout << _$c;
+      if (this->times.at(i) != std::numeric_limits<double>::max()) {
+        if (is_first_printed) {
+          std::cout << " / ";
+        } else {
+          is_first_printed = true;
         }
-        std::cout << this->titles.at(i) << " " << this->times.at(i) << " ms" << _$x;
-      } else {
-        std::cout << this->titles.at(i) << " : " << this->errors.at(i);
+        if (this->errors.at(i) == nullptr) {
+          if (std::distance(this->times.begin(), idx) == i) {
+            std::cout << _$c;
+          }
+          std::cout << this->titles.at(i) << " " << this->times.at(i) << " ms" << _$x;
+        } else {
+          std::cout << this->titles.at(i) << " : " << this->errors.at(i);
+        }
       }
     }
     std::cout << std::endl;
@@ -179,21 +184,28 @@ public:
   typename std::enable_if<!(std::is_same<T, void>::value), bool>::
   type verify_output() {
     if (N < 2) return true;
+    std::vector<T*> cmp_set;
+    for (size_t n = 0; n < N; n += 1) {
+      if (this->times.at(n) != std::numeric_limits<double>::max()) {
+        cmp_set.push_back(this->outputs.at(n));
+      }
+    }
+    if (cmp_set.size() < 2) return true;
     for (size_t y = 0; y < Y; y += 1) {
       for (size_t x = 0; x < X; x += 1) {
         size_t pixel_idx = y * X + x;
         bool pixel_verified = true;
-        for (size_t i = 1; i < N; i += 1) {
-          if (std::abs((long long const)((uint64_t)this->outputs.at(0)[pixel_idx]
-                                         - (uint64_t)this->outputs.at(i)[pixel_idx])) > 1) {
+        for (size_t i = 1; i < cmp_set.size(); i += 1) {
+          if (std::abs((long long const)((uint64_t)cmp_set.at(0)[pixel_idx]
+                                         - (uint64_t)cmp_set.at(i)[pixel_idx])) > 1) {
             pixel_verified = false;
             break;
           }
         }
         if (!pixel_verified) {
-          std::cout << "Diff : " << (uint64_t)this->outputs.at(0)[pixel_idx];
-          for (size_t i = 1; i < N; i += 1) {
-            std::cout << " ¡ê " << (uint64_t)this->outputs.at(i)[pixel_idx];
+          std::cout << "Diff : " << (uint64_t)cmp_set.at(0)[pixel_idx];
+          for (size_t i = 1; i < cmp_set.size(); i += 1) {
+            std::cout << " ¡ê " << (uint64_t)cmp_set.at(i)[pixel_idx];
           }
           std::cout << " in pixel (x, y) = (" << x << ", " << y << ")" << std::endl;
           return false;
@@ -204,9 +216,15 @@ public:
   };
 
   void save_all(const std::string& file_name) {
-    for (size_t i = 0; i < N; i += 1) {
-      __file<T>((OUTPUT_DIR + ("/" + (this->titles.at(i) + ("_" + file_name + ".raw")))).c_str(),
-                this->outputs.at(i), X, Y, "wb");
+    std::vector<size_t> save_idx;
+    for (size_t n = 0; n < N; n += 1) {
+      if (this->times.at(n) != std::numeric_limits<double>::max()) {
+        save_idx.push_back(n);
+      }
+    }
+    for (size_t i = 0; i < save_idx.size(); i += 1) {
+      __file<T>((OUTPUT_DIR + ("/" + (this->titles.at(save_idx.at(i)) + ("_" + file_name + ".raw"))
+                               )).c_str(), this->outputs.at(save_idx.at(i)), X, Y, "wb");
     }
   };
 };
@@ -222,34 +240,6 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
                  std::function<void(double, const char*)> c1_report,
                  std::function<void(double, const char*)> c2_report,
                  bool c1_enable, bool c2_enable, size_t loop_max);
-
-// Execute two functions with label and fixed size
-/*template<typename T>
-void __exec(std::function<void(T*, T*)> c1_func, std::function<void(T*, T*)> c2_func,
-            T* img, ExecResult*, unsigned short loop_max = loop_max_default) {
-  const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
-
-  auto c1_flush = [&]() -> void {
-    cache_flush((__m128i*)img, img_size_d128);
-    cache_flush((__m128i*)c1_out, img_size_d128);
-  };
-
-  auto c2_flush = [&]() -> void {
-    cache_flush((__m128i*)img, img_size_d128);
-    cache_flush((__m128i*)c2_out, img_size_d128);
-  };
-
-  auto c1_wrapper = [&]() -> void {
-    c1_func(img, c1_out);
-  };
-
-  auto c2_wrapper = [&]() -> void {
-    c2_func(img, c2_out);
-  };
-
-  return __exec_base(c1_wrapper, c2_wrapper, c1_flush, c2_flush, true, loop_max, c1_title,
-                     c2_title);
-};*/
 
 // Execute function with one input
 template<size_t X, size_t Y, typename T, typename R>
@@ -291,81 +281,103 @@ void __exec(std::function<void(T*, R*, size_t, size_t)> c1_func,
 };
 
 // Execute function with two inputs
-/*template<typename T, typename R>
-ExecMetaSet* __exec(std::function<void(T*, T*, R*, size_t, size_t)> c_func,
-                   std::function<void(T*, T*, R*, size_t, size_t)> simd_func, bool enable_simd,
-                   T* img1, T* img2, R* c_out, R* simd_out, size_t x_size, size_t y_size,
-                   unsigned short loop_max = loop_max_default) {
-  const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
-  const unsigned int out_size_d128 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
+template<size_t X, size_t Y, typename T, typename R>
+void __exec(std::function<void(T*, T*, R*, size_t, size_t)> c1_func,
+            std::function<void(T*, T*, R*, size_t, size_t)> c2_func,
+            bool enable_c1, bool enable_c2, T* img1, T* img2, ExecResult<X, Y, 2, R>* r,
+            unsigned short loop_max = loop_max_default, bool flush_output = true) {
+  constexpr unsigned int img_size_d128 = (unsigned int)(X * Y * sizeof(T) / 16);
+  constexpr unsigned int out_size_d128 = (unsigned int)(X * Y * sizeof(R) / 16);
 
-  auto c_flush = [&]() -> void {
+  auto c1_flush = [&]() -> void {
     cache_flush((__m128i*)img1, img_size_d128);
     cache_flush((__m128i*)img2, img_size_d128);
-    cache_flush((__m128i*)c_out, out_size_d128);
+    if (flush_output) {
+      cache_flush((__m128i*)r->outputs.at(0), out_size_d128);
+    }
   };
 
-  auto simd_flush = [&]() -> void {
+  auto c2_flush = [&]() -> void {
     cache_flush((__m128i*)img1, img_size_d128);
     cache_flush((__m128i*)img2, img_size_d128);
-    cache_flush((__m128i*)simd_out, out_size_d128);
+    if (flush_output) {
+      cache_flush((__m128i*)r->outputs.at(1), out_size_d128);
+    }
   };
 
-  auto c_wrapper = [&]() -> void {
-    c_func(img1, img2, c_out, x_size, y_size);
+  auto c1_wrapper = [&]() -> void { c1_func(img1, img2, r->outputs.at(0), X, Y); };
+  auto c2_wrapper = [&]() -> void { c2_func(img1, img2, r->outputs.at(1), X, Y); };
+
+  auto c1_report = [&](double time, const char* error_message) -> void {
+    r->times[0] = time;
+    r->errors[0] = error_message;
+  };
+  auto c2_report = [&](double time, const char* error_message) -> void {
+    r->times[1] = time;
+    r->errors[1] = error_message;
   };
 
-  auto simd_wrapper = [&]() -> void {
-    simd_func(img1, img2, simd_out, x_size, y_size);
-  };
-
-  return __exec_base(c_wrapper, simd_wrapper, c_flush, simd_flush, enable_simd, loop_max);
+  __exec_base(c1_wrapper, c2_wrapper, c1_flush, c2_flush, c1_report, c2_report,
+              enable_c1, enable_c2, loop_max);
 };
 
-// Execute function with filter
-template<typename T, typename K, typename R>
-ExecMetaSet* __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> c_func,
-                   std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> simd_func,
-                   bool enable_simd, T* img, const filt::Filter<K>* filter, R* c_out, R* simd_out,
-                   size_t x_size, size_t y_size, unsigned short loop_max = loop_max_default) {
-  const unsigned int img_size_d128 = (unsigned int)(x_size * y_size * sizeof(T) / 16);
+// Execute function with a filter
+template<size_t X, size_t Y, typename T, typename K, typename R>
+void __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> c1_func,
+            std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> c2_func,
+            bool enable_c1, bool enable_c2, T* img, const filt::Filter<K>* filter,
+            ExecResult<X, Y, 2, R>* r, unsigned short loop_max = loop_max_default,
+            bool flush_output = true) {
+  constexpr unsigned int img_size_d128 = (unsigned int)(X * Y * sizeof(T) / 16);
+  constexpr unsigned int out_size_d128 = (unsigned int)(X * Y * sizeof(R) / 16);
   const unsigned int kernel_size_d128 = (unsigned int)(filter->size2 * sizeof(K) / 16);
-  const unsigned int out_size_d128 = (unsigned int)(x_size * y_size * sizeof(R) / 16);
 
-  auto c_flush = [&]() -> void {
-    cache_flush((__m128i*)filter->kernel, kernel_size_d128);
+  auto c1_flush = [&]() -> void {
     cache_flush((__m128i*)img, img_size_d128);
-    cache_flush((__m128i*)c_out, out_size_d128);
-  };
-
-  auto simd_flush = [&]() -> void {
     cache_flush((__m128i*)filter->kernel, kernel_size_d128);
+    if (flush_output) {
+      cache_flush((__m128i*)r->outputs.at(0), out_size_d128);
+    }
+  };
+
+  auto c2_flush = [&]() -> void {
     cache_flush((__m128i*)img, img_size_d128);
-    cache_flush((__m128i*)simd_out, out_size_d128);
+    cache_flush((__m128i*)filter->kernel, kernel_size_d128);
+    if (flush_output) {
+      cache_flush((__m128i*)r->outputs.at(1), out_size_d128);
+    }
   };
 
-  auto c_wrapper = [&]() -> void {
-    c_func(img, filter, c_out, x_size, y_size);
+  auto c1_wrapper = [&]() -> void { c1_func(img, filter, r->outputs.at(0), X, Y); };
+  auto c2_wrapper = [&]() -> void { c2_func(img, filter, r->outputs.at(1), X, Y); };
+
+  auto c1_report = [&](double time, const char* error_message) -> void {
+    r->times[0] = time;
+    r->errors[0] = error_message;
+  };
+  auto c2_report = [&](double time, const char* error_message) -> void {
+    r->times[1] = time;
+    r->errors[1] = error_message;
   };
 
-  auto simd_wrapper = [&]() -> void {
-    simd_func(img, filter, simd_out, x_size, y_size);
-  };
-
-  return __exec_base(c_wrapper, simd_wrapper, c_flush, simd_flush, enable_simd, loop_max);
-};*/
+  __exec_base(c1_wrapper, c2_wrapper, c1_flush, c2_flush, c1_report, c2_report,
+              enable_c1, enable_c2, loop_max);
+};
 
 /******************
  ** Bulk Helpers **
  ******************/
 
-#define resple std::tuple<const char*, std::function<bool(void)>, std::function<void(void)>>
+#define resple std::tuple<const char*, std::function<bool(bool)>, std::function<void(void)>>
 #define respool std::vector<resple>
 #define fileple std::tuple<const char*, void*, size_t, size_t>
 #define filepool std::vector<fileple>
 #define $ std::make_tuple
-#define $ave(name, r) $(name, [&r]() -> bool { return r->verify_output(); }, \
-                        [&r]() -> void { r->save_all(name); })
+#define $ave(name, r) $(name, [&r](bool print_newline) -> bool { \
+                          bool res = r->verify_output(); \
+                          if (print_newline && !res) std::cout << std::endl; \
+                          return res; \
+                        }, [&r]() -> void { r->save_all(name); })
 
 bool __bulk_diff(respool v);
 void __bulk_save(respool v);

@@ -6,75 +6,64 @@
 using std::cout;
 using std::endl;
 
-void task::median_filter(bool enable_simd) {
+void task::median_filter(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
-  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
-  auto* median_3tap_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* median_5tap_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* median_3by3_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* median_3tap_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
-  auto* median_5tap_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
-  auto* median_3by3_simd_img = enable_simd ? __malloc<uint8_t>(x_size * y_size) : nullptr;
   cout << _$m << "<Median Filter>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for median filter... ";
+  constexpr size_t x_size = 512, y_size = 512;
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecMetaSet* r = nullptr;
-  veriples verify_list;
-  cout << "Testing 3-tap median filter... ";
-  r = __exec<uint8_t, uint8_t>(c::median_3tap, simd::median_3tap, enable_simd, pirate_img,
-                               median_3tap_c_img, median_3tap_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("median filter 3-tap", median_3tap_c_img, median_3tap_simd_img, x_size,
-                            y_size));
+  respool result_list;
+  cout << "Testing 3-tap median filter (100 reps)... ";
+  auto* r_3t = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_3tap), __ENABLE_SET__, pirate_img, r_3t,
+                                           100);
+  if (!r_3t->check_error())
+    result_list.push_back($ave("median_3tap", r_3t));
   else
     cout << "[not comparable] ";
-  delete r->print();
-  cout << "Testing 5-tap median filter... ";
-  r = __exec<uint8_t, uint8_t>(c::median_5tap, simd::median_5tap, enable_simd, pirate_img,
-                               median_5tap_c_img, median_5tap_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("median filter 5-tap", median_5tap_c_img, median_5tap_simd_img, x_size,
-                            y_size));
+  cout << _$x;
+  r_3t->print_time();
+
+  cout << "Testing 5-tap median filter (100 reps)... ";
+  auto* r_5t = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_5tap), __ENABLE_SET__, pirate_img, r_5t,
+                                           100);
+  if (!r_5t->check_error())
+    result_list.push_back($ave("median_5tap", r_5t));
   else
     cout << "[not comparable] ";
-  delete r->print();
-  cout << "Testing 3-by-3 median filter... ";
-  r = __exec<uint8_t, uint8_t>(c::median_3by3, simd::median_3by3, enable_simd, pirate_img,
-                               median_3by3_c_img, median_3by3_simd_img, x_size, y_size);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("median filter 3-by-3", median_3by3_c_img, median_3by3_simd_img,
-                            x_size, y_size));
+  cout << _$x;
+  r_5t->print_time();
+
+  cout << "Testing 3-by-3 median filter (100 reps)... ";
+  auto* r_33 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_3by3), __ENABLE_SET__, pirate_img, r_33,
+                                           100);
+  if (!r_33->check_error())
+    result_list.push_back($ave("median_3by3", r_33));
   else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r_33->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (__bulk_diff<uint8_t>(verify_list)) {
-      cout << "OK" << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
 
   // Save image(s)
   cout << "Saving results... ";
-  __bulk_save<uint8_t>(fileples {
-    $("output/c_median_3tap.raw", median_3tap_c_img, x_size, y_size),
-    $("output/c_median_5tap.raw", median_5tap_c_img, x_size, y_size),
-    $("output/c_median_3by3.raw", median_3by3_c_img, x_size, y_size)
-  });
-  if (enable_simd) {
-    __bulk_save<uint8_t>(fileples {
-      $("output/simd_median_3tap.raw", median_3tap_simd_img, x_size, y_size),
-      $("output/simd_median_5tap.raw", median_5tap_simd_img, x_size, y_size),
-      $("output/simd_median_3by3.raw", median_3by3_simd_img, x_size, y_size)
-    });
-  }
+  __bulk_save(result_list);
   cout << "OK" << endl;
+
+  delete r_3t;
+  delete r_5t;
+  delete r_33;
 };

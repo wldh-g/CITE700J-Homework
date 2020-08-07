@@ -20,7 +20,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Filters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Func_C.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Func_SIMD.cpp">
@@ -50,7 +56,7 @@
     <ClCompile Include="Task_MedianFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Task_Scaling.cpp">
+    <ClCompile Include="Task_Multiplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Task_SobelFilter.cpp">
@@ -62,15 +68,12 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core_C.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Func_General.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core_CXX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Filters.h">

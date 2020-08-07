@@ -28,7 +28,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
     } catch (...) {
       c1_report(0, "Unknown error occurred");
     }
-  }
+  } else { c1_report(std::numeric_limits<double>::max(), nullptr); }
 
   if (c2_enable) {
     try {
@@ -46,7 +46,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
     } catch (...) {
       c2_report(0, "Unknown error occurred");
     }
-  }
+  } else { c2_report(std::numeric_limits<double>::max(), nullptr); }
 
   if (cuda_enable) {
     try {
@@ -77,5 +77,5 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       cuda_flush();
       cuda_report(0, "Unknown error occurred");
     }
-  }
+  } else { cuda_report(std::numeric_limits<double>::max(), nullptr); }
 };

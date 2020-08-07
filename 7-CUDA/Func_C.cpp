@@ -498,6 +498,21 @@ namespace c {
     delete[] padded_img;
   }
 
+  ////////////////////
+  // Multiplication //
+  ////////////////////
+
+  void multiply(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size) {
+    for (size_t y = 0; y < y_size; y += 1) {
+      for (size_t x = 0; x < x_size; x += 1) {
+        size_t pos = y * x_size + x;
+        for (size_t i = 0; i < x_size; i += 1) {
+          *(out + pos) = *(in1 + y * x_size + i) * *(in2 + i * x_size + x);
+        }
+      }
+    }
+  };
+
   /////////////
   // Scaling //
   /////////////

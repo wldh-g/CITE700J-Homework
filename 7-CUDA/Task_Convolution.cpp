@@ -7,126 +7,102 @@
 using std::cout;
 using std::endl;
 
-void task::general_convolution_unsigned(bool enable_simd) {
+void task::general_convolution_unsigned(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
-  auto* conv_zp_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* conv_be_c_img = __malloc<uint8_t>(x_size * y_size);
-  auto* conv_zp_simd_img = __malloc<uint8_t>(x_size * y_size);
-  auto* conv_be_simd_img = __malloc<uint8_t>(x_size * y_size);
-  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   cout << _$m << "<General Convolution (unsigned)>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for convolution (unsigned)... ";
+  constexpr size_t x_size = 512, y_size = 512;
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecMetaSet* r = nullptr;
-  veriples verify_list;
-  cout << "Testing zero-pad convolution (unsigned)... ";
-  r = __exec<uint8_t, int8_t, uint8_t>(c::conv_zp_unsigned, simd::conv_zp_unsigned, enable_simd,
-                                       pirate_img, filt::blur_15, conv_zp_c_img, conv_zp_simd_img,
-                                       x_size, y_size, 1000);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("zero-pad convolution", conv_zp_c_img, conv_zp_simd_img, x_size,
-                            y_size));
+  respool result_list;
+  cout << "Testing zero-pad convolution (unsigned, 100 reps)... ";
+  auto* r_zp = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, int8_t, uint8_t>(__FUNC__(conv_zp_unsigned), __ENABLE_SET__,
+                                                  pirate_img, filt::blur_15, r_zp, 100);
+  if (!r_zp->check_error())
+    result_list.push_back($ave("conv_unsigned_zp", r_zp));
   else
     cout << "[not comparable] ";
-  delete r->print();
-  cout << "Testing boundary extension convolution (unsigned)... ";
-  r = __exec<uint8_t, int8_t, uint8_t>(c::conv_be_unsigned, simd::conv_be_unsigned, enable_simd,
-                                       pirate_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
-                                       x_size, y_size, 1000);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("boundary extension convolution", conv_be_c_img, conv_zp_simd_img,
-                            x_size, y_size));
+  cout << _$x;
+  r_zp->print_time();
+
+  cout << "Testing boundary extension convolution (unsigned, 100 reps)... ";
+  auto* r_be = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, int8_t, uint8_t>(__FUNC__(conv_be_unsigned), __ENABLE_SET__,
+                                                  pirate_img, filt::blur_15, r_be, 100);
+  if (!r_be->check_error())
+    result_list.push_back($ave("conv_unsigned_be", r_be));
   else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r_be->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (__bulk_diff<uint8_t>(verify_list)) {
-      cout << "OK" << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
 
   // Save image(s)
   cout << "Saving results... ";
-  __bulk_save<uint8_t>(fileples {
-    $("output/c_conv_zp_unsigned.raw", conv_zp_c_img, x_size, y_size),
-    $("output/c_conv_be_unsigned.raw", conv_be_c_img, x_size, y_size)
-  });
-  if (enable_simd) {
-    __bulk_save<uint8_t>(fileples {
-      $("output/simd_conv_zp_unsigned.raw", conv_zp_simd_img, x_size, y_size),
-      $("output/simd_conv_be_unsigned.raw", conv_be_simd_img, x_size, y_size)
-    });
-  }
+  __bulk_save(result_list);
   cout << "OK" << endl;
+
+  delete r_zp;
+  delete r_be;
 };
 
-void task::general_convolution_signed(bool enable_simd) {
+void task::general_convolution_signed(__TASK_ARG_CODE__) {
   // Initialization
-  size_t x_size = 512, y_size = 512;
-  auto* conv_zp_c_img = __malloc<int8_t>(x_size * y_size);
-  auto* conv_be_c_img = __malloc<int8_t>(x_size * y_size);
-  auto* conv_zp_simd_img = __malloc<int8_t>(x_size * y_size);
-  auto* conv_be_simd_img = __malloc<int8_t>(x_size * y_size);
-  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   cout << _$m << "<General Convolution (signed)>" << _$x << endl;
 
   // Load image(s)
   cout << "Opening image for convolution (signed)... ";
+  constexpr size_t x_size = 512, y_size = 512;
+  auto* pirate_img = __malloc<uint8_t>(x_size * y_size);
   __file<uint8_t>("images/pirate_512_8b.raw", pirate_img, x_size, y_size, "r");
   cout << "OK" << endl;
 
   // Execute function(s)
-  ExecMetaSet* r = nullptr;
-  veriples verify_list;
-  cout << "Testing zero-pad convolution (signed)... ";
-  r = __exec<uint8_t, int8_t, int8_t>(c::conv_zp_signed, simd::conv_zp_signed, enable_simd,
-                                      pirate_img, filt::blur_15, conv_zp_c_img, conv_zp_simd_img,
-                                      x_size, y_size, 1000);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("zero-pad convolution", conv_zp_c_img, conv_zp_simd_img, x_size,
-                            y_size));
+  respool result_list;
+  cout << "Testing zero-pad convolution (signed, 100 reps)... ";
+  auto* r_zp = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, int8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, int8_t, int8_t>(__FUNC__(conv_zp_signed), __ENABLE_SET__,
+                                                  pirate_img, filt::blur_15, r_zp, 100);
+  if (!r_zp->check_error())
+    result_list.push_back($ave("conv_signed_zp", r_zp));
   else
     cout << "[not comparable] ";
-  delete r->print();
-  cout << "Testing boundary extension convolution (signed)... ";
-  r = __exec<uint8_t, int8_t, int8_t>(c::conv_be_signed, simd::conv_be_signed, enable_simd,
-                                      pirate_img, filt::blur_15, conv_be_c_img, conv_be_simd_img,
-                                      x_size, y_size, 1000);
-  if ((r->error1 == nullptr) && (r->error2 == nullptr))
-    verify_list.push_back($("boundary extension convolution", conv_be_c_img, conv_zp_simd_img,
-                            x_size, y_size));
+  cout << _$x;
+  r_zp->print_time();
+
+  cout << "Testing boundary extension convolution (signed, 100 reps)... ";
+  auto* r_be = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, int8_t>({ __TASK_TEST_LABEL__ });
+  __exec<x_size, y_size, uint8_t, int8_t, int8_t>(__FUNC__(conv_be_signed), __ENABLE_SET__,
+                                                  pirate_img, filt::blur_15, r_be, 100);
+  if (!r_be->check_error())
+    result_list.push_back($ave("conv_signed_be", r_be));
   else
     cout << "[not comparable] ";
-  delete r->print();
+  cout << _$x;
+  r_be->print_time();
 
   // Verify results using comparison
-  if (enable_simd) {
-    cout << "Verifying results... ";
-    if (__bulk_diff<uint8_t>(verify_list)) {
-      cout << "OK" << endl;
-    }
+  cout << "Verifying results... ";
+  if (__bulk_diff(result_list)) {
+    cout << "OK" << endl;
   }
 
   // Save image(s)
   cout << "Saving results... ";
-  __bulk_save<int8_t>(fileples {
-    $("output/c_conv_zp_signed.raw", conv_zp_c_img, x_size, y_size),
-    $("output/c_conv_be_signed.raw", conv_be_c_img, x_size, y_size)
-  });
-  if (enable_simd) {
-    __bulk_save<int8_t>(fileples {
-      $("output/simd_conv_zp_signed.raw", conv_zp_simd_img, x_size, y_size),
-      $("output/simd_conv_be_signed.raw", conv_be_simd_img, x_size, y_size)
-    });
-  }
+  __bulk_save(result_list);
   cout << "OK" << endl;
+
+  delete r_zp;
+  delete r_be;
 };
