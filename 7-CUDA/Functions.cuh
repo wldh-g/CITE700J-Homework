@@ -24,6 +24,9 @@ namespace cuda {
   extern void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size,
                       dim3& blocks, dim3& threads);
 
+  extern void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size,
+                  dim3& blocks, dim3& threads);
+
   extern void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size,
                                      dim3& blocks, dim3& threads);
   extern void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size,

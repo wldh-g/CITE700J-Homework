@@ -110,6 +110,14 @@ namespace simd {
     }
   };
 
+  /////////////////
+  // Dot Product //
+  /////////////////
+
+  void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size) {
+    throw "Not implemented"; // TODO
+  };
+
   ///////////////
   // Transpose //
   ///////////////

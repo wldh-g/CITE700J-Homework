@@ -19,7 +19,7 @@
 #define __TASK_C_SIMD__ true, true, false
 #define __TASK_C_SIMD_CUDA__ true, true, true
 
-#define __TASK_C1_C2__ true, true, false
+#define __TASK_C1_C2__ true, false, false
 #else
 #define __ENABLE_ARG__ bool enable_c, bool enable_simd
 #define __ENABLE_SET__ enable_c, enable_simd
@@ -38,16 +38,17 @@
 #define __TASK_C_SIMD__ true, true
 #define __TASK_C_SIMD_CUDA__ true, true
 
-#define __TASK_C1_C2__ true, true
+#define __TASK_C1_C2__ true, false
 #endif
 
 namespace task {
-  void all();
+  void all(bool do_only_fully_available_tasks);
 
   void accumulation_16b(__TASK_ARG_H__);
   void inversion_8b(__TASK_ARG_H__);
   void flipx_flipy(__TASK_ARG_H__);
   void addition_8b_16b(__TASK_ARG_H__);
+  void dot_product(__TASK_ARG_H__);
   void transposition_8b(__TASK_ARG_H__);
   void transposition_multibit(__TASK_ARG_H__);
   void general_convolution_unsigned(__TASK_ARG_H__);

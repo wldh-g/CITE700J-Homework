@@ -23,7 +23,7 @@ void task::addition_8b_16b(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing 8-bit addition (500 reps)... ";
+  cout << "Testing 8-bit addition (500 reps)... " << _$r;
   auto* r_8 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(add_8b), __ENABLE_SET__, pirate_img, glow_img,
                                            r_8, 500);
@@ -34,7 +34,7 @@ void task::addition_8b_16b(__TASK_ARG_CODE__) {
   cout << _$x;
   r_8->print_time();
 
-  cout << "Testing 16-bit addition (500 reps)... ";
+  cout << "Testing 16-bit addition (500 reps)... " << _$r;
   auto* r_16 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint16_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint16_t>(__FUNC__(add_16b), __ENABLE_SET__, pirate_img, glow_img,
                                             r_16, 500);

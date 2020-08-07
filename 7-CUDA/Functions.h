@@ -21,6 +21,8 @@ namespace c {
   void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size);
   void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
 
+  void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size);
+
   void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_16(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
@@ -53,10 +55,10 @@ namespace c {
   void scale_24(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
 
   #ifdef __INTEL_COMPILER
-  void scale_13_unroll64(uint8_t* in, uint8_t* out);
-  void scale_13_unroll512(uint8_t* in, uint8_t* out);
-  void scale_24_unroll64(uint8_t* in, uint8_t* out);
-  void scale_24_unroll512(uint8_t* in, uint8_t* out);
+  void scale_13_unroll64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+  void scale_13_unroll512(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+  void scale_24_unroll64(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
+  void scale_24_unroll512(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   #endif
 }
 
@@ -70,6 +72,8 @@ namespace simd {
 
   void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size);
   void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
+
+  void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size);
 
   void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);

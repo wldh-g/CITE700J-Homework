@@ -19,7 +19,7 @@ void task::median_filter(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing 3-tap median filter (100 reps)... ";
+  cout << "Testing 3-tap median filter (100 reps)... " << _$r;
   auto* r_3t = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_3tap), __ENABLE_SET__, pirate_img, r_3t,
                                            100);
@@ -30,7 +30,7 @@ void task::median_filter(__TASK_ARG_CODE__) {
   cout << _$x;
   r_3t->print_time();
 
-  cout << "Testing 5-tap median filter (100 reps)... ";
+  cout << "Testing 5-tap median filter (100 reps)... " << _$r;
   auto* r_5t = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_5tap), __ENABLE_SET__, pirate_img, r_5t,
                                            100);
@@ -41,7 +41,7 @@ void task::median_filter(__TASK_ARG_CODE__) {
   cout << _$x;
   r_5t->print_time();
 
-  cout << "Testing 3-by-3 median filter (100 reps)... ";
+  cout << "Testing 3-by-3 median filter (100 reps)... " << _$r;
   auto* r_33 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_3by3), __ENABLE_SET__, pirate_img, r_33,
                                            100);

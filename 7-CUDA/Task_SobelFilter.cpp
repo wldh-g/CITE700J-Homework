@@ -19,7 +19,7 @@ void task::sobel_filter(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing zero-pad Sobel filter (100 reps)... ";
+  cout << "Testing zero-pad Sobel filter (100 reps)... " << _$r;
   auto* r_zp = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(sobel_zp), __ENABLE_SET__, pirate_img, r_zp,
                                            100);
@@ -30,7 +30,7 @@ void task::sobel_filter(__TASK_ARG_CODE__) {
   cout << _$x;
   r_zp->print_time();
 
-  cout << "Testing boundary extension Sobel filter (100 reps)... ";
+  cout << "Testing boundary extension Sobel filter (100 reps)... " << _$r;
   auto* r_be = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(sobel_be), __ENABLE_SET__, pirate_img, r_be,
                                            100);

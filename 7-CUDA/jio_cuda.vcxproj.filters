@@ -95,6 +95,9 @@
     <ClCompile Include="Task_Convolution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Task_DotProduct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">

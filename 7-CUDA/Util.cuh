@@ -3,8 +3,8 @@
 
 #define __x_pos__ blockDim.x * blockIdx.x + threadIdx.x
 #define __y_pos__ blockIdx.y
-#define __x_len__ blockDim.x * gridDim.x
-#define __y_len__ gridDim.y
+// #define __x_len__ blockDim.x * gridDim.x
+// #define __y_len__ gridDim.y // Use x_size, y_size instead of x_len, y_len
 
 inline void print_dim3(dim3& d) {
   printf("<%d, %d, %d>\n", d.x, d.y, d.z);

@@ -19,10 +19,10 @@ void task::transposition_8b(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing line-by-line transpose... " << _$r;
+  cout << "Testing line-by-line transpose (1000 reps)... " << _$r;
   auto* r_ll = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(transpose_line_by_line), __ENABLE_SET__,
-                                           pirate_img, r_ll);
+                                           pirate_img, r_ll, 1000);
   if (!r_ll->check_error())
     result_list.push_back($ave("transpose_line_by_line", r_ll));
   else
@@ -121,7 +121,7 @@ void task::transposition_multibit(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing 8-bit transpose (1000 reps)... ";
+  cout << "Testing 8-bit transpose (1000 reps)... " << _$r;
   auto* r_8 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(transpose_block_16), __ENABLE_SET__,
                                            pirate8_img, r_8, 1000);
@@ -132,7 +132,7 @@ void task::transposition_multibit(__TASK_ARG_CODE__) {
   cout << _$x;
   r_8->print_time();
 
-  cout << "Testing 16-bit transpose (1000 reps)... ";
+  cout << "Testing 16-bit transpose (1000 reps)... " << _$r;
   auto* r_16 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint16_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint16_t, uint16_t>(__FUNC__(transpose16_block_8), __ENABLE_SET__,
                                            pirate16_img, r_16, 1000);
@@ -143,7 +143,7 @@ void task::transposition_multibit(__TASK_ARG_CODE__) {
   cout << _$x;
   r_16->print_time();
 
-  cout << "Testing 32-bit transpose (1000 reps)... ";
+  cout << "Testing 32-bit transpose (1000 reps)... " << _$r;
   auto* r_32 = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint32_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint32_t, uint32_t>(__FUNC__(transpose32_block_4), __ENABLE_SET__,
                                              pirate32_img, r_32, 1000);

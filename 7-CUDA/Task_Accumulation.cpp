@@ -25,7 +25,7 @@ void task::accumulation_16b(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing accumulation (1000 reps)... ";
+  cout << "Testing accumulation (1000 reps)... " << _$r;
   auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint64_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint16_t, uint64_t>(__FUNC__(accumulation_16b), __ENABLE_SET__,
                                              pirate16_img, r, loop_max_default, false);
@@ -90,10 +90,10 @@ void task::accumulation_16b_tbb(__TASK_ARG_CODE__) {
 
   // Execute without TBB
   respool result_list;
-  cout << "Testing accumulation (without TBB)... ";
+  cout << "Testing accumulation (without TBB, 5 reps)... " << _$r;
   auto* r_wo = new ExecResult<x_size, y_size, 2, uint64_t>({ "C", "SIMD" });
   __exec<x_size, y_size, uint16_t, uint64_t>(c_gen, simd_gen, enable_c, enable_simd, pirate16_img,
-                                             r_wo, loop_max, false);
+                                             r_wo, 5, false);
   if (!r_wo->check_error())
     result_list.push_back($ave("accumulation_no_tbb", r_wo));
   else
@@ -146,13 +146,9 @@ void task::accumulation_16b_tbb(__TASK_ARG_CODE__) {
     tbb::task_arena exec_arena((int)nthread);
     exec_arena.execute([&] {
       cout << "Testing accumulation (nthread=" << tbb::this_task_arena::max_concurrency()
-        << ")... " << _$r;
+        << ", 5 reps)... " << _$r;
       __exec<x_size, y_size, uint16_t, uint64_t>(c_tbb, simd_tbb, enable_c, enable_simd,
-                                                 pirate16_img, r_w, loop_max, false);
-      if (!r_w->check_error())
-        result_list.push_back($ave("accumulation_tbb", r_w));
-      else
-        cout << "[not comparable] ";
+                                                 pirate16_img, r_w, 5, false);
       cout << _$x;
       r_w->print_time();
     });
@@ -170,12 +166,6 @@ void task::accumulation_16b_tbb(__TASK_ARG_CODE__) {
   execute_with_nthread(256);
   execute_with_nthread(512);
   execute_with_nthread(1024);
-
-  // Verify results using comparison
-  cout << "Verifying results... ";
-  if (__bulk_diff(result_list)) {
-    cout << "OK" << endl;
-  }
 
   delete r_w;
 };

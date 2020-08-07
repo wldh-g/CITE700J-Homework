@@ -13,8 +13,7 @@
 __global__ void invert_8b(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
-  uint32_t index = y_pos * x_len + x_pos;
+  uint32_t index = y_pos * x_size + x_pos;
   
   if (x_pos < x_size) {
     out[index] = 255 - in[index];
@@ -35,10 +34,9 @@ void cuda::accumulation_16b __cuda_todo__(accumulation_16b, uint16_t, uint64_t);
 __global__ void xflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
 
   if (x_pos < x_size) {
-    out[y_pos * x_len + x_len - x_pos - 1] = in[x_len * y_pos + x_pos];
+    out[y_pos * x_size + x_size - x_pos - 1] = in[x_size * y_pos + x_pos];
   }
 };
 void cuda::xflip __make_host__(xflip, uint8_t, uint8_t);
@@ -46,11 +44,9 @@ void cuda::xflip __make_host__(xflip, uint8_t, uint8_t);
 __global__ void yflip(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
-  uint32_t y_len = __y_len__;
 
   if (x_pos < x_size) {
-    out[(y_len - y_pos - 1) * x_len + x_pos] = in[x_len * y_pos + x_pos];
+    out[(y_size - y_pos - 1) * x_size + x_pos] = in[x_size * y_pos + x_pos];
   }
 };
 void cuda::yflip __make_host__(yflip, uint8_t, uint8_t);
@@ -62,8 +58,7 @@ void cuda::yflip __make_host__(yflip, uint8_t, uint8_t);
 __global__ void add_8b(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
-  uint32_t index = x_pos + y_pos * x_len;
+  uint32_t index = x_pos + y_pos * x_size;
 
   if (x_pos < x_size) {
     out[index] = in1[index] / 2 + in2[index] / 2;
@@ -74,14 +69,40 @@ void cuda::add_8b __make_host_2__(add_8b, uint8_t, uint8_t);
 __global__ void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
-  uint32_t index = x_pos + y_pos * x_len;
+  uint32_t index = x_pos + y_pos * x_size;
 
   if (x_pos < x_size) {
     out[index] = (uint16_t)in1[index] + (uint16_t)in2[index];
   }
 };
 void cuda::add_16b __make_host_2__(add_16b, uint8_t, uint16_t);
+
+/////////////////
+// Dot Product //
+/////////////////
+
+__global__ void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size) {
+  uint32_t x_pos = __x_pos__;
+  uint32_t y_pos = __y_pos__;
+  uint32_t index = x_pos + y_pos * x_size;
+  /*__shared__ uint64_t good_boy[512];
+  if (index < 512) good_boy[index] = 0;
+  __syncthreads();
+
+  if (x_pos < x_size) {
+    // printf("%llx %llx\n", (uint64_t)in1[index], (uint64_t)in1[index]);
+    atomicAdd(&good_boy[index % 512], (uint64_t)in1[index] * (uint64_t)in2[index]);
+  }
+  __syncthreads();
+  if (index < 512) {
+    printf("%llx ", good_boy[index]);
+    atomicAdd(out, good_boy[index]);
+  }*/
+  if (x_pos < x_size) {
+    atomicAdd(out, (uint64_t)in1[index] * (uint64_t)in2[index]);
+  }
+};
+void cuda::dot __make_host_2__(dot, uint8_t, uint64_t);
 
 ///////////////
 // Transpose //
@@ -90,10 +111,9 @@ void cuda::add_16b __make_host_2__(add_16b, uint8_t, uint16_t);
 __global__ void transpose8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
 
   if (x_pos < x_size) {
-    out[x_pos * x_len + y_pos] = in[x_len * y_pos + x_pos];
+    out[x_pos * x_size + y_pos] = in[x_size * y_pos + x_pos];
   }
 };
 void cuda::transpose_line_by_line __make_host__(transpose8, uint8_t, uint8_t);
@@ -106,10 +126,9 @@ void cuda::transpose_block_128 __make_host__(transpose8, uint8_t, uint8_t);
 __global__ void transpose16(uint16_t* in, uint16_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
 
   if (x_pos < x_size) {
-    out[x_pos * x_len + y_pos] = in[x_len * y_pos + x_pos];
+    out[x_pos * x_size + y_pos] = in[x_size * y_pos + x_pos];
   }
 };
 void cuda::transpose16_block_8 __make_host__(transpose16, uint16_t, uint16_t);
@@ -117,10 +136,9 @@ void cuda::transpose16_block_8 __make_host__(transpose16, uint16_t, uint16_t);
 __global__ void transpose32(uint32_t* in, uint32_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
 
   if (x_pos < x_size) {
-    out[x_pos * x_len + y_pos] = in[x_len * y_pos + x_pos];
+    out[x_pos * x_size + y_pos] = in[x_size * y_pos + x_pos];
   }
 };
 void cuda::transpose32_block_4 __make_host__(transpose32, uint32_t, uint32_t);
@@ -156,11 +174,13 @@ void cuda::median_3by3 __cuda_todo__(median_3by3, uint8_t, uint8_t);
 __global__ void multiply(uint8_t* in1, uint8_t* in2, uint8_t* out, size_t x_size, size_t y_size) {
   uint32_t x_pos = __x_pos__;
   uint32_t y_pos = __y_pos__;
-  uint32_t x_len = __x_len__;
-  uint32_t index = x_pos + y_pos * x_len;
+  uint32_t index = x_pos + y_pos * x_size;
 
+  out[index] = 0;
   if (x_pos < x_size) {
-    out[index] = (uint16_t)in1[index] + (uint16_t)in2[index];
+    for (size_t i = 0; i < x_size; i += 1) {
+      out[index] += in1[y_pos * x_size + i] * in2[i * x_size + x_pos];
+    }
   }
 };
 void cuda::multiply __make_host_2__(multiply, uint8_t, uint8_t);

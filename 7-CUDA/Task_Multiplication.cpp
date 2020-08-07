@@ -33,9 +33,9 @@ void task::multiplication(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing 32x32 multiplication (1000 reps)... ";
+  cout << "Testing 32x32 multiplication (1000 reps)... " << _$r;
   auto* r_32 = new ExecResult<x_size_1, y_size_1, __TASK_TEST_CNT__, uint8_t>(
-    {__TASK_TEST_LABEL__ });
+    { __TASK_TEST_LABEL__ });
   __exec<x_size_1, y_size_1, uint8_t, uint8_t>(__FUNC__(multiply), __ENABLE_SET__, pirate32_img,
                                                glow32_img, r_32, 1000);
   if (!r_32->check_error())
@@ -45,11 +45,11 @@ void task::multiplication(__TASK_ARG_CODE__) {
   cout << _$x;
   r_32->print_time();
 
-  cout << "Testing 512x512 multiplication (100 reps)... ";
+  cout << "Testing 512x512 multiplication (50 reps)... " << _$r;
   auto* r_512 = new ExecResult<x_size_2, y_size_2, __TASK_TEST_CNT__, uint8_t>(
     { __TASK_TEST_LABEL__ });
   __exec<x_size_2, y_size_2, uint8_t, uint8_t>(__FUNC__(multiply), __ENABLE_SET__, pirate512_img,
-                                               glow512_img, r_512, 100);
+                                               glow512_img, r_512, 50);
   if (!r_512->check_error())
     result_list.push_back($ave("multiplication_512", r_512));
   else
@@ -57,7 +57,7 @@ void task::multiplication(__TASK_ARG_CODE__) {
   cout << _$x;
   r_512->print_time();
 
-  cout << "Testing 2048x2048 multiplication (1 reps)... ";
+  cout << "Testing 2048x2048 multiplication (1 reps)... " << _$r;
   auto* r_2048 = new ExecResult<x_size_3, y_size_3, __TASK_TEST_CNT__, uint8_t>(
     { __TASK_TEST_LABEL__ });
   __exec<x_size_3, y_size_3, uint8_t, uint8_t>(__FUNC__(multiply), __ENABLE_SET__, pirate2048_img,

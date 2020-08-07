@@ -367,6 +367,8 @@ void __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> 
 #define __make_host_f__(fn_name, input_type, filter_type, output_type) \
   (input_type* in, const filt::Filter<filter_type>* f, output_type* out, size_t x_size, \
    size_t y_size, dim3& blocks, dim3& threads) { ::fn_name(in, f, out, x_size, y_size); }
+#define __syncthreads(a)
+#define atomicAdd(ptr, val)
 #endif
 
 #define __cuda_todo__(fn_name, input_type, output_type) \

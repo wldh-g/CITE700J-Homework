@@ -49,7 +49,7 @@ extern std::vector<void*>* vec_ptrs;
 
 template<typename T>
 T* __malloc(size_t size) {
-  T* ptr = new T[size];
+  T* ptr = new T[size] { 0 };
   vec_ptrs->push_back(ptr);
   return ptr;
 };
@@ -182,7 +182,7 @@ public:
   };
 
   typename std::enable_if<!(std::is_same<T, void>::value), bool>::
-  type verify_output() {
+  type verify_output(bool print_newline = false) {
     if (N < 2) return true;
     std::vector<T*> cmp_set;
     for (size_t n = 0; n < N; n += 1) {
@@ -203,6 +203,7 @@ public:
           }
         }
         if (!pixel_verified) {
+          if (print_newline) std::cout << std::endl;
           std::cout << "Diff : " << (uint64_t)cmp_set.at(0)[pixel_idx];
           for (size_t i = 1; i < cmp_set.size(); i += 1) {
             std::cout << " ¡ê " << (uint64_t)cmp_set.at(i)[pixel_idx];
@@ -374,10 +375,8 @@ void __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> 
 #define filepool std::vector<fileple>
 #define $ std::make_tuple
 #define $ave(name, r) $(name, [&r](bool print_newline) -> bool { \
-                          bool res = r->verify_output(); \
-                          if (print_newline && !res) std::cout << std::endl; \
-                          return res; \
-                        }, [&r]() -> void { r->save_all(name); })
+                          return r->verify_output(print_newline); }, \
+                        [&r]() -> void { r->save_all(name); })
 
 bool __bulk_diff(respool v);
 void __bulk_save(respool v);

@@ -20,7 +20,9 @@ int main() {
   #endif
 
   // Tasks
-  task::all();
+  // task::all(true);
+  //task::dot_product(true, false, true);
+  task::median_filter(true, true, true);
 
   return __exit(0);
 }

@@ -20,7 +20,7 @@ void task::general_convolution_unsigned(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing zero-pad convolution (unsigned, 100 reps)... ";
+  cout << "Testing zero-pad convolution (unsigned, 100 reps)... " << _$r;
   auto* r_zp = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, int8_t, uint8_t>(__FUNC__(conv_zp_unsigned), __ENABLE_SET__,
                                                   pirate_img, filt::blur_15, r_zp, 100);
@@ -31,7 +31,7 @@ void task::general_convolution_unsigned(__TASK_ARG_CODE__) {
   cout << _$x;
   r_zp->print_time();
 
-  cout << "Testing boundary extension convolution (unsigned, 100 reps)... ";
+  cout << "Testing boundary extension convolution (unsigned, 100 reps)... " << _$r;
   auto* r_be = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, int8_t, uint8_t>(__FUNC__(conv_be_unsigned), __ENABLE_SET__,
                                                   pirate_img, filt::blur_15, r_be, 100);
@@ -70,7 +70,7 @@ void task::general_convolution_signed(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing zero-pad convolution (signed, 100 reps)... ";
+  cout << "Testing zero-pad convolution (signed, 100 reps)... " << _$r;
   auto* r_zp = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, int8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, int8_t, int8_t>(__FUNC__(conv_zp_signed), __ENABLE_SET__,
                                                   pirate_img, filt::blur_15, r_zp, 100);
@@ -81,7 +81,7 @@ void task::general_convolution_signed(__TASK_ARG_CODE__) {
   cout << _$x;
   r_zp->print_time();
 
-  cout << "Testing boundary extension convolution (signed, 100 reps)... ";
+  cout << "Testing boundary extension convolution (signed, 100 reps)... " << _$r;
   auto* r_be = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, int8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, int8_t, int8_t>(__FUNC__(conv_be_signed), __ENABLE_SET__,
                                                   pirate_img, filt::blur_15, r_be, 100);
