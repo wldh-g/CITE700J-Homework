@@ -40,6 +40,9 @@ void task::all(bool do_only_fully_available_tasks) {
     cout << endl;
   }
 
+  task::median_filter(__TASK_C_CUDA__);
+  cout << endl;
+
   task::multiplication(__TASK_C_CUDA__);
   cout << endl;
   

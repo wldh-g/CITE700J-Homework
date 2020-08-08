@@ -21,8 +21,12 @@ int main() {
 
   // Tasks
   // task::all(true);
-  //task::dot_product(true, false, true);
-  task::median_filter(true, true, true);
+  
+  task::dot_product(true, false, true);
+  std::cout << std::endl;
+
+  task::median_filter_horz(true, false, true);
+  std::cout << std::endl;
 
   return __exit(0);
 }

@@ -456,6 +456,43 @@ namespace c {
     delete[] padded_img;
   };
 
+  void median_5tap_horz(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+    const size_t x_4plus = (x_size + 4);
+    size_t x, y;
+    uint8_t* padded_img = new uint8_t[x_4plus * y_size] { 0 };
+    for (y = 0; y < y_size; y += 1) {
+      memcpy(padded_img + x_4plus * y/* + 2*/, in + y * x_size, x_size);
+    }
+    /*for (y = 0; y < y_size; y += 1) {
+      *(padded_img + y * x_4plus) = *(padded_img + y * x_4plus + 2);
+      *(padded_img + y * x_4plus + 1) = *(padded_img + y * x_4plus + 2);
+      *(padded_img + (y + 1) * x_4plus - 2) = *(padded_img + (y + 1) * x_4plus - 3);
+      *(padded_img + (y + 1) * x_4plus - 1) = *(padded_img + (y + 1) * x_4plus - 3);
+    }*/
+    uint8_t point1, point2, point3, point4, point5;
+    for (y = 0; y < y_size; y += 1) {
+      for (x = 0; x < x_size - 4; x += 1) {
+        size_t pos = y * x_4plus + x;
+        point1 = *(padded_img + pos);
+        point2 = *(padded_img + pos + 1);
+        point3 = *(padded_img + pos + 2);
+        point4 = *(padded_img + pos + 3);
+        point5 = *(padded_img + pos + 4);
+        sort2(point1, point2);
+        sort2(point4, point5);
+        sort2(point3, point5);
+        sort2(point3, point4);
+        sort2(point1, point4);
+        sort2(point1, point3);
+        sort2(point2, point5);
+        sort2(point2, point4);
+        sort2(point2, point3);
+        *(out + y * x_size + x) = point3;
+      }
+    }
+    delete[] padded_img;
+  };
+
   void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
     size_t x, y;
     const size_t x_2plus = x_size + 2;

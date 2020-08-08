@@ -56,6 +56,7 @@ namespace task {
   void sobel_filter(__TASK_ARG_H__);
   void scaling(__TASK_ARG_H__);
   void median_filter(__TASK_ARG_H__);
+  void median_filter_horz(__TASK_ARG_H__);
   void multiplication(__TASK_ARG_H__);
 
   #ifdef __INTEL_COMPILER

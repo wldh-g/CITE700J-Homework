@@ -1,3 +1,5 @@
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
 #include "Core.h"
 #include "Functions.cuh"
 #include "Util.cuh"
@@ -165,6 +167,68 @@ void cuda::sobel_be __cuda_todo__(sobel_be, uint8_t, uint8_t);
 
 void cuda::median_3tap __cuda_todo__(median_3tap, uint8_t, uint8_t);
 void cuda::median_5tap __cuda_todo__(median_5tap, uint8_t, uint8_t);
+
+__global__ void median_5tap_horz(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
+  uint32_t x_pos = __x_pos__;
+  uint32_t y_pos = __y_pos__;
+  uint32_t index = x_pos + y_pos * x_size;
+  /*size_t x_4plus = x_size + 4;
+  __shared__ uint8_t good_boy[4194304];
+  if (index < y_size) {
+    good_boy[0 + index * x_4plus] = *(in + index * x_size);
+    good_boy[1 + index * x_4plus] = *(in + index * x_size);
+    good_boy[(index + 1) * x_4plus - 2] = *(in + (index + 1) * x_size - 1);
+    good_boy[(index + 1) * x_4plus - 1] = *(in + (index + 1) * x_size - 1);
+    memcpy(&good_boy[2 + index * x_4plus], in + index * x_size, x_size);
+  }
+  __syncthreads();*/
+
+  if (x_pos < x_size - 4) {
+    uint8_t vec[5];
+    vec[0] = in[index];
+    vec[1] = in[index + 1];
+    vec[2] = in[index + 2];
+    vec[3] = in[index + 3];
+    vec[4] = in[index + 4];
+    /*if (x_pos == 0) {
+      vec[0] = in[index];
+      vec[1] = in[index];
+      vec[2] = in[index];
+      vec[3] = in[index + 1];
+      vec[4] = in[index + 2];
+    } else if (x_pos == 1) {
+      vec[0] = in[index];
+      vec[1] = in[index];
+      vec[2] = in[index + 1];
+      vec[3] = in[index + 2];
+      vec[4] = in[index + 3];
+    } else if ((x_size - x_pos) == 1) {
+      vec[0] = in[index];
+      vec[1] = in[index + 1];
+      vec[2] = in[index + 2];
+      vec[3] = in[index + 2];
+      vec[4] = in[index + 2];
+    } else if ((x_size - x_pos) == 2) {
+      vec[0] = in[index];
+      vec[1] = in[index + 1];
+      vec[2] = in[index + 2];
+      vec[3] = in[index + 3];
+      vec[4] = in[index + 3];
+    } else {
+      vec[0] = in[index];
+      vec[1] = in[index + 1];
+      vec[2] = in[index + 2];
+      vec[3] = in[index + 3];
+      vec[4] = in[index + 4];
+    }*/
+    thrust::sort(thrust::seq, vec, vec + 5);
+    out[index] = vec[2];
+    //printf("vec[2] = %d\n", vec[2]);
+  }
+  __syncthreads();
+};
+void cuda::median_5tap_horz __make_host__(median_5tap_horz, uint8_t, uint8_t);
+
 void cuda::median_3by3 __cuda_todo__(median_3by3, uint8_t, uint8_t);
 
 ////////////////////
