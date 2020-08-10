@@ -23,7 +23,9 @@
     <ClCompile Include="Task_Addition.cpp" />
     <ClCompile Include="Task_All.cpp" />
     <ClCompile Include="Task_Convolution.cpp" />
+    <ClCompile Include="Task_DotProduct.cpp" />
     <ClCompile Include="Task_Flipping.cpp" />
+    <ClCompile Include="Task_Histogram.cpp" />
     <ClCompile Include="Task_Inversion.cpp" />
     <ClCompile Include="Task_MedianFilter.cpp" />
     <ClCompile Include="Task_Multiplication.cpp" />

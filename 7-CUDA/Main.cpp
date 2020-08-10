@@ -21,13 +21,7 @@ int main() {
   #endif
 
   // Tasks
-  // task::all(true);
-
-  task::general_convolution_unsigned(__TASK_C_CUDA__);
-  std::cout << std::endl;
-  
-  task::histogram_8bin(__TASK_C_CUDA__);
-  std::cout << std::endl;
+  task::all(true);
 
   return __exit(0);
 }
