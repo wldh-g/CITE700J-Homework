@@ -81,10 +81,10 @@ void task::median_filter_horz(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing horizontal 5-tap median filter (100 reps)... " << _$r;
+  cout << "Testing horizontal 5-tap median filter (1000 reps)... " << _$r;
   auto* r_5t = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint8_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint8_t>(__FUNC__(median_5tap_horz), __ENABLE_SET__, pirate_img,
-                                           r_5t, 100);
+                                           r_5t, 1000);
   if (!r_5t->check_error())
     result_list.push_back($ave("median_5tap", r_5t));
   else

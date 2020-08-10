@@ -1,7 +1,8 @@
 #include "Core_CUDA.cuh"
 
-void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
-                 std::function<void(void)> cuda_func, std::function<void(void)> c1_flush,
+void __exec_base(std::function<void(CPerfCounter&)> c1_func,
+                 std::function<void(CPerfCounter&)> c2_func,
+                 std::function<void(CPerfCounter&)> cuda_func, std::function<void(void)> c1_flush,
                  std::function<void(void)> c2_flush, std::function<void(void)> cuda_flush,
                  std::function<void(double, const char*)> c1_report,
                  std::function<void(double, const char*)> c2_report,
@@ -17,9 +18,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
         c1_flush();
-        timer.Start();
-        c1_func();
-        timer.Stop();
+        c1_func(timer);
         c1_time += timer.GetElapsedTime();
       }
       c1_report(c1_time / (double)loop_max * 1000.0, nullptr);
@@ -35,9 +34,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
         c2_flush();
-        timer.Start();
-        c2_func();
-        timer.Stop();
+        c2_func(timer);
         c2_time += timer.GetElapsedTime();
       }
       c2_report(c2_time / (double)loop_max * 1000.0, nullptr);
@@ -59,10 +56,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       // Do execution
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
-        timer.Start();
-        cuda_func();
-        cudaDeviceSynchronize();
-        timer.Stop();
+        cuda_func(timer);
         cuda_time += timer.GetElapsedTime();
         cuda_flush();
       }
@@ -70,6 +64,9 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       // Clearing out
       if (cudaDeviceReset() != cudaSuccess) throw "Failed to reset CUDA device";
       cuda_report(cuda_time / (double)loop_max * 1000.0, nullptr);
+    } catch (cudaError_t& error_code) {
+      cuda_report(0, ("Failed to synchronize CUDA core after launching the kernel ("
+                      + std::to_string(error_code) + ")").c_str());
     } catch (const char* error) {
       cuda_flush();
       cuda_report(0, error);
@@ -78,4 +75,11 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       cuda_report(0, "Unknown error occurred");
     }
   } else { cuda_report(std::numeric_limits<double>::max(), nullptr); }
+};
+
+__global__ void setKernel_int8_global(filt::Filter<int8_t>* filter, int8_t* kernel_ptr) {
+  filter->kernel = kernel_ptr;
+};
+void setKernel(filt::Filter<int8_t>* filter, int8_t* kernel_ptr) {
+  setKernel_int8_global __set_block_thread__(1,1) (filter, kernel_ptr);
 };

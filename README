@@ -6,30 +6,31 @@ Jio Gim
 
 This repository contains
 
-1. XFlip_YFlip_C
+1. XFlip_YFlip_C (HW01)
    Image flipping using generic C.
 
-2. Addition_Transpose_C
+2. Addition_Transpose_C (HW02)
    Image addition and transpose using generic C.
 
-3. Convolution_SobelFilter_C
+3. Convolution_SobelFilter_C (HW03)
    Image convolution and Sobel filter using generic C.
 
-4. MedianFilter_Scaling_C
+4. MedianFilter_Scaling_C (HW04)
    Median filter and image value scaling using generic C.
 
-5. All_SIMD
+5. All_SIMD (HW05)
    Flipping, addition, accumulation, value-scaling, median filter and
    transposition using SIMD.
 
-6. Multiprocessing
+6. Multiprocessing (HW06)
    Accumulation using Threading Building Blocks.
 
-7. Addition_XFlip_YFlip_CUDA
-   Image addition and flipping using CUDA.
+7. CUDA (HW07 to HW10)
+   Image addition and flipping, multiplication, dot product, convolution,
+   histogram, and median filter using CUDA.
 
-Homework 1 to 7 was gradually implemented. You can find all code used for
-previous homeworks in homework 7.
+Number 1 to 7 was gradually implemented. You can find all code used for
+previous homeworks in 7th directory.
 
 Disassembled view logs of homework 1 to 4 from Visual Studio are saved on
 `0-DASM_*` directory. For compiler information, refer to the top of each files.

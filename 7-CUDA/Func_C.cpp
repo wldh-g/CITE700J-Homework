@@ -28,7 +28,6 @@ namespace c {
   //////////////////
 
   void accumulation_16b(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
-    *out = 0;
     size_t i_max = x_size * y_size;
     for (size_t i = 0; i < i_max; i += 1) {
       *out += (uint64_t) * (in + i);
@@ -91,11 +90,22 @@ namespace c {
 
   void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size) {
     size_t x, y;
-    *out = 0;
     for (y = 0; y < y_size; y += 1) {
       for (x = 0; x < x_size; x += 1) {
         size_t pos = y * x_size + x;
-        *out += (uint64_t)*(in1 + pos) * (uint64_t)*(in2 + pos);
+        *out += (uint64_t) * (in1 + pos) * (uint64_t) * (in2 + pos);
+      }
+    }
+  };
+
+  ///////////////
+  // Histogram //
+  ///////////////
+
+  void histogram_8bin(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
+    for (size_t y = 0; y < y_size; y += 1) {
+      for (size_t x = 0; x < x_size; x += 1) {
+        *(out + (*(in + y * x_size + x) % 8)) += 1;
       }
     }
   };
@@ -191,11 +201,11 @@ namespace c {
   void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
                         size_t x_size, size_t y_size) {
     size_t x, y, fx, fy;
-    const size_t plus = (filter->size - 1) / 2;
-    const size_t x_2plus = x_size + 2 * plus;
-    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * plus)] { 0 };
+    const size_t x_2plus = x_size + 2 * filter->bud_size;
+    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * filter->bud_size)] { 0 };
     for (y = 0; y < y_size; y += 1) {
-      memcpy(padded_img + (y + plus) * x_2plus + plus, in + y * x_size, x_size);
+      memcpy(padded_img + (y + filter->bud_size) * x_2plus + filter->bud_size, in + y * x_size,
+             x_size);
     }
     int32_t tmp;
     for (y = 0; y < y_size; y += 1) {
@@ -218,11 +228,11 @@ namespace c {
   void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
                       size_t y_size) {
     size_t x, y, fx, fy;
-    const size_t plus = (filter->size - 1) / 2;
-    const size_t x_2plus = x_size + 2 * plus;
-    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * plus)] { 0 };
+    const size_t x_2plus = x_size + 2 * filter->bud_size;
+    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * filter->bud_size)] { 0 };
     for (y = 0; y < y_size; y += 1) {
-      memcpy(padded_img + (y + plus) * x_2plus + plus, in + y * x_size, x_size);
+      memcpy(padded_img + (y + filter->bud_size) * x_2plus + filter->bud_size, in + y * x_size,
+             x_size);
     }
     int32_t tmp;
     for (y = 0; y < y_size; y += 1) {
@@ -245,22 +255,24 @@ namespace c {
   void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
                         size_t x_size, size_t y_size) {
     size_t x, y, fx, fy;
-    const size_t plus = (filter->size - 1) / 2;
-    const size_t x_2plus = x_size + 2 * plus;
-    const size_t y_2plus = y_size + 2 * plus;
-    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * plus)] { 0 };
+    const size_t x_2plus = x_size + 2 * filter->bud_size;
+    const size_t y_2plus = y_size + 2 * filter->bud_size;
+    uint8_t* padded_img = new uint8_t[x_2plus * (y_size + 2 * filter->bud_size)] { 0 };
     uint8_t* in_last_line = in + (y_size - 1) * x_size;
     for (y = 0; y < y_size; y += 1) {
-      memcpy(padded_img + (y + plus) * x_2plus + plus, in + y * x_size, x_size);
+      memcpy(padded_img + (y + filter->bud_size) * x_2plus + filter->bud_size, in + y * x_size,
+             x_size);
     }
-    for (y = 0; y < plus; y += 1) {
-      memcpy(padded_img + y * x_2plus + plus, in, x_size);
-      memcpy(padded_img + (y_size + plus + y) * x_2plus + plus, in_last_line, x_size);
+    for (y = 0; y < filter->bud_size; y += 1) {
+      memcpy(padded_img + y * x_2plus + filter->bud_size, in, x_size);
+      memcpy(padded_img + (y_size + filter->bud_size + y) * x_2plus + filter->bud_size,
+             in_last_line, x_size);
     }
     for (y = 0; y < y_2plus; y += 1) {
-      memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + plus, plus);
-      memcpy(padded_img + (y + 1) * x_2plus - plus,
-             padded_img + (y + 1) * x_2plus - 2 * plus, plus);
+      memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + filter->bud_size,
+             filter->bud_size);
+      memcpy(padded_img + (y + 1) * x_2plus - filter->bud_size,
+             padded_img + (y + 1) * x_2plus - 2 * filter->bud_size, filter->bud_size);
     }
     int32_t tmp;
     for (y = 0; y < y_size; y += 1) {
@@ -283,22 +295,24 @@ namespace c {
   void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out, size_t x_size,
                       size_t y_size) {
     size_t x, y, fx, fy;
-    const size_t plus = (filter->size - 1) / 2;
-    const size_t x_2plus = x_size + 2 * plus;
-    const size_t y_2plus = y_size + 2 * plus;
+    const size_t x_2plus = x_size + 2 * filter->bud_size;
+    const size_t y_2plus = y_size + 2 * filter->bud_size;
     uint8_t* padded_img = new uint8_t[x_2plus * y_2plus] { 0 };
     uint8_t* in_last_line = in + (y_size - 1) * x_size;
     for (y = 0; y < y_size; y += 1) {
-      memcpy(padded_img + (y + plus) * x_2plus + plus, in + y * x_size, x_size);
+      memcpy(padded_img + (y + filter->bud_size) * x_2plus + filter->bud_size, in + y * x_size,
+             x_size);
     }
-    for (y = 0; y < plus; y += 1) {
-      memcpy(padded_img + y * x_2plus + plus, in, x_size);
-      memcpy(padded_img + (y_size + plus + y) * x_2plus + plus, in_last_line, x_size);
+    for (y = 0; y < filter->bud_size; y += 1) {
+      memcpy(padded_img + y * x_2plus + filter->bud_size, in, x_size);
+      memcpy(padded_img + (y_size + filter->bud_size + y) * x_2plus + filter->bud_size,
+             in_last_line, x_size);
     }
     for (y = 0; y < y_2plus; y += 1) {
-      memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + plus, plus);
-      memcpy(padded_img + (y + 1) * x_2plus - plus,
-             padded_img + (y + 1) * x_2plus - 2 * plus, plus);
+      memcpy(padded_img + y * x_2plus, padded_img + y * x_2plus + filter->bud_size,
+             filter->bud_size);
+      memcpy(padded_img + (y + 1) * x_2plus - filter->bud_size,
+             padded_img + (y + 1) * x_2plus - 2 * filter->bud_size, filter->bud_size);
     }
     int32_t tmp;
     for (y = 0; y < y_size; y += 1) {
@@ -457,27 +471,16 @@ namespace c {
   };
 
   void median_5tap_horz(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
-    const size_t x_4plus = (x_size + 4);
     size_t x, y;
-    uint8_t* padded_img = new uint8_t[x_4plus * y_size] { 0 };
-    for (y = 0; y < y_size; y += 1) {
-      memcpy(padded_img + x_4plus * y/* + 2*/, in + y * x_size, x_size);
-    }
-    /*for (y = 0; y < y_size; y += 1) {
-      *(padded_img + y * x_4plus) = *(padded_img + y * x_4plus + 2);
-      *(padded_img + y * x_4plus + 1) = *(padded_img + y * x_4plus + 2);
-      *(padded_img + (y + 1) * x_4plus - 2) = *(padded_img + (y + 1) * x_4plus - 3);
-      *(padded_img + (y + 1) * x_4plus - 1) = *(padded_img + (y + 1) * x_4plus - 3);
-    }*/
     uint8_t point1, point2, point3, point4, point5;
     for (y = 0; y < y_size; y += 1) {
       for (x = 0; x < x_size - 4; x += 1) {
-        size_t pos = y * x_4plus + x;
-        point1 = *(padded_img + pos);
-        point2 = *(padded_img + pos + 1);
-        point3 = *(padded_img + pos + 2);
-        point4 = *(padded_img + pos + 3);
-        point5 = *(padded_img + pos + 4);
+        size_t pos = y * x_size + x;
+        point1 = *(in + pos);
+        point2 = *(in + pos + 1);
+        point3 = *(in + pos + 2);
+        point4 = *(in + pos + 3);
+        point5 = *(in + pos + 4);
         sort2(point1, point2);
         sort2(point4, point5);
         sort2(point3, point5);
@@ -487,10 +490,9 @@ namespace c {
         sort2(point2, point5);
         sort2(point2, point4);
         sort2(point2, point3);
-        *(out + y * x_size + x) = point3;
+        *(out + pos) = point3;
       }
     }
-    delete[] padded_img;
   };
 
   void median_3by3(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size) {
@@ -558,7 +560,6 @@ namespace c {
     for (size_t y = 0; y < y_size; y += 1) {
       for (size_t x = 0; x < x_size; x += 1) {
         uint8_t* pos = out + y * x_size + x;
-        *pos = 0;
         for (size_t i = 0; i < x_size; i += 1) {
           *pos += *(in1 + y * x_size + i) * *(in2 + i * x_size + x);
         }

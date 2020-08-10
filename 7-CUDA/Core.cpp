@@ -2,7 +2,8 @@
 
 std::vector<void*>* vec_ptrs = new std::vector<void*>();
 
-void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
+void __exec_base(std::function<void(CPerfCounter&)> c1_func,
+                 std::function<void(CPerfCounter&)> c2_func,
                  std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
                  std::function<void(double, const char*)> c1_report,
                  std::function<void(double, const char*)> c2_report,
@@ -16,9 +17,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
         c1_flush();
-        timer.Start();
-        c1_func();
-        timer.Stop();
+        c1_func(timer);
         c1_time += timer.GetElapsedTime();
       }
       c1_report(c1_time / (double)loop_max * 1000.0, nullptr);
@@ -34,9 +33,7 @@ void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2
       for (size_t loop_cnt = 0; loop_cnt < loop_max; loop_cnt += 1) {
         timer.Reset();
         c2_flush();
-        timer.Start();
-        c2_func();
-        timer.Stop();
+        c2_func(timer);
         c2_time += timer.GetElapsedTime();
       }
       c2_report(c2_time / (double)loop_max * 1000.0, nullptr);

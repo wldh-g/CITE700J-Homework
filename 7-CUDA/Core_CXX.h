@@ -236,7 +236,8 @@ public:
 // Test helper on CUDA supports up to 3 functions in one test. (See Core.cuh)
 // Test helper without CUDA supports up to 2 functions in one test. (See below)
 
-void __exec_base(std::function<void(void)> c1_func, std::function<void(void)> c2_func,
+void __exec_base(std::function<void(CPerfCounter&)> c1_func,
+                 std::function<void(CPerfCounter&)> c2_func,
                  std::function<void(void)> c1_flush, std::function<void(void)> c2_flush,
                  std::function<void(double, const char*)> c1_report,
                  std::function<void(double, const char*)> c2_report,
@@ -254,6 +255,7 @@ void __exec(std::function<void(T*, R*, size_t, size_t)> c1_func,
   auto c1_flush = [&]() -> void {
     cache_flush((__m128i*)img, img_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(0), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(0), out_size_d128);
     }
   };
@@ -261,12 +263,21 @@ void __exec(std::function<void(T*, R*, size_t, size_t)> c1_func,
   auto c2_flush = [&]() -> void {
     cache_flush((__m128i*)img, img_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(1), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(1), out_size_d128);
     }
   };
 
-  auto c1_wrapper = [&]() -> void { c1_func(img, r->outputs.at(0), X, Y); };
-  auto c2_wrapper = [&]() -> void { c2_func(img, r->outputs.at(1), X, Y); };
+  auto c1_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c1_func(img, r->outputs.at(0), X, Y);
+    timer.Stop();
+  };
+  auto c2_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c2_func(img, r->outputs.at(1), X, Y);
+    timer.Stop();
+  };
 
   auto c1_report = [&](double time, const char* error_message) -> void {
     r->times[0] = time;
@@ -294,6 +305,7 @@ void __exec(std::function<void(T*, T*, R*, size_t, size_t)> c1_func,
     cache_flush((__m128i*)img1, img_size_d128);
     cache_flush((__m128i*)img2, img_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(0), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(0), out_size_d128);
     }
   };
@@ -302,12 +314,21 @@ void __exec(std::function<void(T*, T*, R*, size_t, size_t)> c1_func,
     cache_flush((__m128i*)img1, img_size_d128);
     cache_flush((__m128i*)img2, img_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(1), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(1), out_size_d128);
     }
   };
 
-  auto c1_wrapper = [&]() -> void { c1_func(img1, img2, r->outputs.at(0), X, Y); };
-  auto c2_wrapper = [&]() -> void { c2_func(img1, img2, r->outputs.at(1), X, Y); };
+  auto c1_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c1_func(img1, img2, r->outputs.at(0), X, Y);
+    timer.Stop();
+  };
+  auto c2_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c2_func(img1, img2, r->outputs.at(1), X, Y);
+    timer.Stop();
+  };
 
   auto c1_report = [&](double time, const char* error_message) -> void {
     r->times[0] = time;
@@ -337,6 +358,7 @@ void __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> 
     cache_flush((__m128i*)img, img_size_d128);
     cache_flush((__m128i*)filter->kernel, kernel_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(0), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(0), out_size_d128);
     }
   };
@@ -345,12 +367,21 @@ void __exec(std::function<void(T*, const filt::Filter<K>*, R*, size_t, size_t)> 
     cache_flush((__m128i*)img, img_size_d128);
     cache_flush((__m128i*)filter->kernel, kernel_size_d128);
     if (flush_output) {
+      memset(r->outputs.at(1), 0, sizeof(R) * X * Y);
       cache_flush((__m128i*)r->outputs.at(1), out_size_d128);
     }
   };
 
-  auto c1_wrapper = [&]() -> void { c1_func(img, filter, r->outputs.at(0), X, Y); };
-  auto c2_wrapper = [&]() -> void { c2_func(img, filter, r->outputs.at(1), X, Y); };
+  auto c1_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c1_func(img, filter, r->outputs.at(0), X, Y);
+    timer.Stop();
+  };
+  auto c2_wrapper = [&](CPerfCounter& timer) -> void {
+    timer.Start();
+    c2_func(img, filter, r->outputs.at(1), X, Y);
+    timer.Stop();
+  };
 
   auto c1_report = [&](double time, const char* error_message) -> void {
     r->times[0] = time;

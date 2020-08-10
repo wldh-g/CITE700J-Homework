@@ -119,6 +119,14 @@ namespace simd {
   };
 
   ///////////////
+  // Histogram //
+  ///////////////
+
+  void histogram_8bin(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size) {
+    throw "Not implemented"; // TODO
+  };
+
+  ///////////////
   // Transpose //
   ///////////////
 

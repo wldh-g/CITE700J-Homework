@@ -27,6 +27,9 @@ namespace cuda {
   extern void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size,
                   dim3& blocks, dim3& threads);
 
+  extern void histogram_8bin(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size,
+                             dim3& blocks, dim3& threads);
+
   extern void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size,
                                      dim3& blocks, dim3& threads);
   extern void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size,
@@ -44,14 +47,24 @@ namespace cuda {
   extern void transpose32_block_4(uint32_t* in, uint32_t* out, size_t x_size, size_t y_size,
                                   dim3& blocks, dim3& threads);
    
-  extern void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
-                               size_t x_size, size_t y_size, dim3& blocks, dim3& threads);
-  extern void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out,
-                             size_t x_size, size_t y_size, dim3& blocks, dim3& threads);
-  extern void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, uint8_t* out,
-                               size_t x_size, size_t y_size, dim3& blocks, dim3& threads);
-  extern void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, int8_t* out,
-                             size_t x_size, size_t y_size, dim3& blocks, dim3& threads);
+  extern void conv_zp_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                               uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                               dim3& threads);
+  extern void conv_zb_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                               uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                               dim3& threads);
+  extern void conv_zp_signed(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                             int8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                             dim3& threads);
+  extern void conv_be_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                               uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                               dim3& threads);
+  extern void conv_bb_unsigned(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                               uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                               dim3& threads);
+  extern void conv_be_signed(uint8_t* in, const filt::Filter<int8_t>* filter, size_t f_size,
+                             int8_t* out, size_t x_size, size_t y_size, dim3& blocks,
+                             dim3& threads);
   
   extern void sobel_zp(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size, dim3& blocks,
                        dim3& threads);

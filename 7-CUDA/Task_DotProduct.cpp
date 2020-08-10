@@ -23,10 +23,10 @@ void task::dot_product(__TASK_ARG_CODE__) {
 
   // Execute function(s)
   respool result_list;
-  cout << "Testing dot_product (50 reps)... " << _$r;
+  cout << "Testing dot_product (500 reps)... " << _$r;
   auto* r = new ExecResult<x_size, y_size, __TASK_TEST_CNT__, uint64_t>({ __TASK_TEST_LABEL__ });
   __exec<x_size, y_size, uint8_t, uint64_t>(__FUNC__(dot), __ENABLE_SET__, pirate_img, glow_img, r,
-                                            1);
+                                            500);
   if (!r->check_error())
     result_list.push_back($ave("dot_product", r));
   else

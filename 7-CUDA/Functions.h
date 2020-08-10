@@ -23,6 +23,8 @@ namespace c {
 
   void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size);
 
+  void histogram_8bin(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size);
+
   void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_16(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
@@ -75,6 +77,8 @@ namespace simd {
   void add_16b(uint8_t* in1, uint8_t* in2, uint16_t* out, size_t x_size, size_t y_size);
 
   void dot(uint8_t* in1, uint8_t* in2, uint64_t* out, size_t x_size, size_t y_size);
+
+  void histogram_8bin(uint16_t* in, uint64_t* out, size_t x_size, size_t y_size);
 
   void transpose_line_by_line(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);
   void transpose_block_8(uint8_t* in, uint8_t* out, size_t x_size, size_t y_size);

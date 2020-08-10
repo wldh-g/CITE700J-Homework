@@ -9,7 +9,8 @@ int main() {
   std::cout << "Compiled with ICL." << std::endl << std::endl;
   #else
   #ifdef _CUDA
-  std::cout << "Compiled with NVCC." << std::endl << std::endl;
+  std::cout << "Compiled with NVCC." << std::endl;
+  std::cout << "CUDA time measurements do not include cudaMemcpy time." << std::endl << std::endl;
   #else
   #ifdef _MSC_VER
   std::cout << "Compiled with MSVC." << std::endl << std::endl;
@@ -21,11 +22,11 @@ int main() {
 
   // Tasks
   // task::all(true);
-  
-  task::dot_product(true, false, true);
-  std::cout << std::endl;
 
-  task::median_filter_horz(true, false, true);
+  task::general_convolution_unsigned(__TASK_C_CUDA__);
+  std::cout << std::endl;
+  
+  task::histogram_8bin(__TASK_C_CUDA__);
   std::cout << std::endl;
 
   return __exit(0);

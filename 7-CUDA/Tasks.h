@@ -49,6 +49,7 @@ namespace task {
   void flipx_flipy(__TASK_ARG_H__);
   void addition_8b_16b(__TASK_ARG_H__);
   void dot_product(__TASK_ARG_H__);
+  void histogram_8bin(__TASK_ARG_H__);
   void transposition_8b(__TASK_ARG_H__);
   void transposition_multibit(__TASK_ARG_H__);
   void general_convolution_unsigned(__TASK_ARG_H__);

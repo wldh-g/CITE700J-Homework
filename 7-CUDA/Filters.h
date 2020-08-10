@@ -10,6 +10,7 @@ namespace filt {
   template<typename T, typename R = int32_t>
   class Filter {
   public:
+    size_t bud_size;
     size_t size;
     size_t size2;
     T* kernel;
@@ -17,6 +18,7 @@ namespace filt {
     R scale;
 
     Filter(size_t size, std::initializer_list<T> kernel) : size(size) {
+      this->bud_size = size / 2;
       this->size2 = size * size;
       this->scale = (R)(size * size);
       this->kernel = new T[size2];

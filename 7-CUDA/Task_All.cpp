@@ -5,6 +5,8 @@ using std::cout;
 using std::endl;
 
 void task::all(bool do_only_fully_available_tasks) {
+  // Put in "if (__TASK_TEST_CNT__ == 2)" if no CUDA implementation exists
+  // Put in "#ifdef __INTEL_COMPILER" if ICL is required
   
   if (__TASK_TEST_CNT__ == 2) {
     task::accumulation_16b(__TASK_C_SIMD__);
@@ -21,6 +23,9 @@ void task::all(bool do_only_fully_available_tasks) {
 
   task::dot_product(__TASK_C_CUDA__);
   cout << endl;
+
+  task::histogram_8bin(__TASK_C_CUDA__);
+  cout << endl;
   
   task::flipx_flipy(__TASK_C_SIMD_CUDA__);
   cout << endl;
@@ -28,9 +33,10 @@ void task::all(bool do_only_fully_available_tasks) {
   if (__TASK_TEST_CNT__ == 2) {
     task::general_convolution_signed(__TASK_C__);
     cout << endl;
-    task::general_convolution_unsigned(__TASK_C__);
-    cout << endl;
   }
+
+  task::general_convolution_unsigned(__TASK_C_CUDA__);
+  cout << endl;
 
   task::inversion_8b(__TASK_C_SIMD_CUDA__);
   cout << endl;
@@ -40,7 +46,7 @@ void task::all(bool do_only_fully_available_tasks) {
     cout << endl;
   }
 
-  task::median_filter(__TASK_C_CUDA__);
+  task::median_filter_horz(__TASK_C_CUDA__);
   cout << endl;
 
   task::multiplication(__TASK_C_CUDA__);
